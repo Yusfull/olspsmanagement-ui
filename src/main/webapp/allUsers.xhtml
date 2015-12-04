@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:body>
+        <h:form id="am">
+
+            <p:dataTable
+                var="element"
+                value="#{inventoryManagerMB.model}"
+                lazy="true"
+                paginator="true"
+                rows="10"
+                paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                rowsPerPageTemplate="10,50,100"
+                id="sites">
+
+                <p:column sortBy="id" filterBy="id" filterMatchMode="contains" headerText="ID">                
+                    <h:outputText value="#{element.id}" />
+                </p:column>
+                <p:column sortBy="name" filterBy="name" filterMatchMode="contains" headerText="Name">                
+                    <h:outputText value="#{element.name}" />
+                </p:column>
+                <p:column sortBy="siteType.name" filterBy="siteType.name" filterMatchMode="contains" headerText="Type">                
+                    <h:outputText value="#{element.siteType.name}" />
+                </p:column>
+                <p:column sortBy="ip" filterBy="ip" filterMatchMode="contains" headerText="IP">                
+                    <h:outputText value="#{element.ip} " />
+                </p:column>
+                <p:column sortBy="description" filterBy="description" filterMatchMode="contains" headerText="Description">                
+                    <h:outputText value="#{element.description}" />
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>

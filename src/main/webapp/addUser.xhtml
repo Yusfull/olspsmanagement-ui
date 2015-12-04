@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:form id="userSummaryId">
+                <p:growl id="userSummaryGrowl" life="1000" autoUpdate="true"/>
+                <p:dialog id="summaryDialog" header="User Summary" widgetVar="summaryWidget">
+                    <p:layout style="min-width:1035px;min-height:450px;" >
+                        <p:layoutUnit position="west" resizable="false"  size="345"  header="User">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                            <p:selectManyMenu id="usergroups" value="#{olspsController.selectedUser}">
+                                <f:selectItems value="#{olspsController.userList}"/>
+                            </p:selectManyMenu>
+                        </p:layoutUnit>
+
+                        <p:layoutUnit position="center" resizable="false" size="345" header="Groups">
+                            <h:selectOneListbox id="members" size="5"   >
+                                <f:selectItem itemValue="525" itemLabel="Support"/>
+                                <f:selectItem itemValue="535" itemLabel="Analytics" />
+                                <f:selectItem itemValue="535" itemLabel="Finance" />
+                                <f:selectItem itemValue="535" itemLabel="Admin" />
+                            </h:selectOneListbox>
+                        </p:layoutUnit>
+
+                        <p:layoutUnit position="east" resizable="false" size="345" header="Activities">
+                            <h:selectOneListbox id="activities" size="5"  >
+                                <f:selectItem itemValue="535" itemLabel="Finance" />
+                                <f:selectItem itemValue="535" itemLabel="Admin" />
+                                <f:selectItem itemValue="535" itemLabel="Projects" />
+                            </h:selectOneListbox>
+                        </p:layoutUnit>
+                    </p:layout>
+                </p:dialog>
+            </h:form>
+
+</html>
+
