@@ -22,8 +22,12 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
+import org.omnifaces.util.Ajax;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TransferEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -44,10 +48,12 @@ public class OlspsController implements Serializable {
     User user = new User();
     Group group = new Group();
     boolean editable;
+    String selectedGroupValue;
 
     private DualListModel<User> userModel;
 
-    User selectedUser;
+    private User selectedUser;
+    private Group selectedGroup;
     //String groupName;
     List<User> userList;
     List<User> toGroupUser = new ArrayList();
@@ -56,7 +62,7 @@ public class OlspsController implements Serializable {
 
     @PostConstruct
     public void init() {
-        
+
         //userList = new ArrayList();
         //userModel.setSource(getUserList());
         findAllUsers();
@@ -136,12 +142,44 @@ public class OlspsController implements Serializable {
         this.selectedUser = selectedUser;
     }
 
+    public Group getSelectedGroup() {
+        return selectedGroup;
+    }
+
+    public void setSelectedGroup(Group selectedGroup) {
+        this.selectedGroup = selectedGroup;
+    }
+
     public List<User> getToGroupUser() {
         return toGroupUser;
     }
 
     public void setToGroupUser(List<User> toGroupUser) {
         this.toGroupUser = toGroupUser;
+    }
+
+    public String getSelectedGroupValue() {
+        return this.selectedGroupValue;
+    }
+
+    public void setSelectedGroupValue(String selectedGroupValue) {
+        this.selectedGroupValue = selectedGroupValue;
+    }
+    
+    public void login(String uname, String pname) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            boolean validate = accessControll.isUserCredentialsValid(uname, pname);
+            if (validate) {
+                user = accessControll.findUser(uname);
+                String name = user.getFirstName();
+                context.addMessage(null, new FacesMessage("Welcome: ", name));
+            } else {
+                context.addMessage(null, new FacesMessage("Opps! username and password do not match "));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     public String addUser() {
@@ -179,7 +217,6 @@ public class OlspsController implements Serializable {
     }
 
     public List<Group> findAllGroups() {
-
         try {
             groupsList = accessControll.findGroups("%");
             return groupsList;
@@ -201,6 +238,21 @@ public class OlspsController implements Serializable {
         }
     }
 
+    public Group deleteGroup() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            context.addMessage(null, new FacesMessage("Group will be permanently deleted! Are you sure ? ", group.getName()));
+            accessControll.deleteGroup(selectedGroup.getName());
+            context.addMessage(null, new FacesMessage("Group" + group.getName() + " " + "deleted!"));
+            groupsList.clear();
+            findAllGroups();
+            Ajax.update("deletefrmgrpid:usergroupsid");            
+        } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception excxception) {
+            excxception.printStackTrace();
+        }
+        return null;
+    }
+
     public List<User> findAllUsers() {
         userList = new ArrayList();
         FacesContext context = FacesContext.getCurrentInstance();
@@ -215,6 +267,51 @@ public class OlspsController implements Serializable {
         return null;
     }
 
+    /*
+     * Facility for picklist
+     */
+    public void onTransfer(TransferEvent event) {
+        StringBuilder builder = new StringBuilder();
+        for (Object item : event.getItems()) {
+            builder.append(((Group) item).getName()).append("<br />");
+        }
+        FacesMessage msg = new FacesMessage();
+        msg.setSeverity(FacesMessage.SEVERITY_INFO);
+        msg.setSummary("Items Transferred");
+        msg.setDetail(builder.toString());
+
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+    }
+
+    public void onSelect(SelectEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            System.out.println(event.getObject().toString());
+        } catch (Exception exe) {
+
+        }
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Selected", event.getObject().toString()));
+    }
+
+    public void onUnselect(UnselectEvent event) {
+        try {
+            if (event.getSource() != null) {
+                System.out.println(event.getObject().toString());
+            }
+        } catch (Exception e) {
+        }
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Unselected", event.getObject().toString()));
+    }
+
+    public void onReorder() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "List Reordered", null));
+    }
+
+    /*
+     * facilitis to take care of datatable  
+     */
     public void onRowEdit(RowEditEvent event) {
         try {
             accessControll.updateUser((User) event.getObject());

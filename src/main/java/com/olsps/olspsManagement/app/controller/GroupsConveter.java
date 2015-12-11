@@ -6,41 +6,48 @@
 package com.olsps.olspsManagement.app.controller;
 
 import com.olsps.olspsaccesscontrolapi.Group;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 /**
  *
  * @author Eusuph
  */
-@FacesConverter("groupsConveter")
-public class GroupsConveter implements Converter{
-
+@FacesConverter("groupsConverter")
+public class GroupsConveter implements Converter {
+    @Inject
+    OlspsController aOlspsController;
+    
     @Override
-    public Group getAsObject(FacesContext context, UIComponent component, String value) {
-       if (value != null && value.trim().length() > 0) {
-            try {
-                OlspsController service = (OlspsController) context.getExternalContext().getApplicationMap().get("groupsConveter");
-                return (Group) service.getGroupsList().get(Integer.parseInt(value));
-            } catch (NumberFormatException e) {
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        if (value != null && value.trim().length() > 0) {
+            try {                
+                for (Group g: aOlspsController.getGroupsList()){
+                    if (g.getName().equals(value)){
+                        return g;
+                    }
+                }
+                return null;
+            } catch (ConverterException e) {
+                e.printStackTrace();
             }
         } else {
             return null;
         }
+        return null;
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        if (value != null) {
-            return String.valueOf(((Object) value));
+        if (value != null && value instanceof Group) {
+            return ((Group) value).getName();
         } else {
             return null;
         }
     }
-    
+
 }

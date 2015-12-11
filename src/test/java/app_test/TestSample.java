@@ -7,6 +7,9 @@ package app_test;
 
 import com.olsps.olspsaccesscontrolapi.AccessControllerWebService;
 import com.olsps.olspsaccesscontrolapi.AccessControllerWebService_Service;
+import com.olsps.olspsaccesscontrolapi.Group;
+import com.olsps.olspsaccesscontrolapi.InvalidKeySpecException_Exception;
+import com.olsps.olspsaccesscontrolapi.NoSuchAlgorithmException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotFoundException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotUniqueException_Exception;
 import com.olsps.olspsaccesscontrolapi.User;
@@ -24,24 +27,33 @@ import org.testng.annotations.BeforeMethod;
  * @author Eusuph
  */
 public class TestSample {
-
+    
     private static AccessControllerWebService accessControll;
     AccessControllerWebService_Service serviceFactory;
     User user = new User();
-
+    Group group = new Group();
+    
     public TestSample() {
         serviceFactory = new AccessControllerWebService_Service();
         accessControll = serviceFactory.getAccessControllerWebServicePort();
-
+        
     }
 
     // TODO add test methods here.
     // The methods must be annotated with annotation @Test. For example:
     //
-   // @Test(priority = 0)
+    // @Test(priority = 0)
     public void hello() {
-
+        
         System.out.println("This is a test !!");
+    }
+    
+   // @Test(priority = 0)
+    public void login() throws InvalidKeySpecException_Exception, NoSuchAlgorithmException_Exception, RecordNotFoundException_Exception, RecordNotUniqueException_Exception {
+        String uname = "khungani";
+        String pname = "devteam";
+        boolean valid = accessControll.isUserCredentialsValid(uname, pname);
+        Assert.assertTrue(valid);
     }
 
     /*
@@ -61,28 +73,28 @@ public class TestSample {
             Logger.getLogger(TestSample.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     //@Test(priority = 0)
-    public void updataUsedata(){
-        try{
+    public void updataUsedata() {
+        try {
             String name = "kaka";
-             user = accessControll.findUser("yusuf");
-             String username = user.getFirstName();
-              username = name ;
-             System.err.println("***" + name);
-             user.setFirstName(username);
-             System.out.println("What is in there: " + username);
-             
-             accessControll.updateUser(user);
-        }catch(RecordNotUniqueException_Exception | RecordNotFoundException_Exception tx){
+            user = accessControll.findUser("yusuf");
+            String username = user.getFirstName();
+            username = name;
+            System.err.println("***" + name);
+            user.setFirstName(username);
+            System.out.println("What is in there: " + username);
+            
+            accessControll.updateUser(user);
+        } catch (RecordNotUniqueException_Exception | RecordNotFoundException_Exception tx) {
             tx.printStackTrace();
         }
     }
-    
+
     /*
      * test add groups 
      */
-
-   // @Test(priority = 2)
+    // @Test(priority = 2)
     public void testAddGroup() {
         try {
             List groups = accessControll.findGroupNames("Support test");
@@ -111,7 +123,7 @@ public class TestSample {
         }
     }
 
-   // @Test(priority = 4)
+    // @Test(priority = 4)
     void testAssignUserToGroup() {
         try {
             accessControll.addUserToGroup("Yusufa", "Dev");
@@ -121,14 +133,23 @@ public class TestSample {
             ex.printStackTrace();
         }
     }
+  // @Test(priority = 0)
+    public void deleteGroup() {
+        try {
+            String groupToDelete = "MSL";
+            accessControll.deleteGroup(groupToDelete);
+            Assert.assertNull(accessControll.findGroup(groupToDelete), groupToDelete);
+        } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception ex) {
+        }
+    }
+
     /*
      * Test passes and returns a list of users objects
      */
-
     //@Test(priority = 5)
     public void testFindUsers() {
         List<User> registeredUsers;
-
+        
         try {
             registeredUsers = accessControll.findUsers("%");
             if (registeredUsers.isEmpty()) {
@@ -144,10 +165,10 @@ public class TestSample {
             ex.getMessage();
         }
     }
+
     /*
      * Test pass, searches for a user by username not first name and returns a user object
      */
-
     //@Test(priority = 2)
     void testFindUser() {
         try {
@@ -155,12 +176,12 @@ public class TestSample {
             if (user.getFirstName().equals("Cassim")) {
                 Assert.assertTrue(true);
             }
-
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-
+     
     //@Test
     public void testAddGroups() {
         try {
@@ -169,7 +190,7 @@ public class TestSample {
             if (!groups.isEmpty()) {
                 Assert.assertTrue(true);
             }
-
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -178,15 +199,15 @@ public class TestSample {
     @BeforeClass
     public static void setUpClass() throws AssertionError {
     }
-
+    
     @AfterClass
     public static void tearDownClass() throws AssertionError {
     }
-
+    
     @BeforeMethod
     public void setUpMethod() throws AssertionError {
     }
-
+    
     @AfterMethod
     public void tearDownMethod() throws AssertionError {
     }
