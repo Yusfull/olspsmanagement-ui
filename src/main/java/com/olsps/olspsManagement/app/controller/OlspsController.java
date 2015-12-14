@@ -165,7 +165,7 @@ public class OlspsController implements Serializable {
     public void setSelectedGroupValue(String selectedGroupValue) {
         this.selectedGroupValue = selectedGroupValue;
     }
-    
+
     public void login(String uname, String pname) {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
@@ -200,7 +200,7 @@ public class OlspsController implements Serializable {
         } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception ex) {
             ex.printStackTrace();
         } finally {
-            context.getAttributes();
+
         }
     }
 
@@ -212,7 +212,7 @@ public class OlspsController implements Serializable {
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            context.getMessages();
+
         }
     }
 
@@ -229,12 +229,12 @@ public class OlspsController implements Serializable {
     public void addUserToGroup() {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
-            accessControll.addUserToGroup(user.getUserName(), group.getName());
-            context.addMessage(null, new FacesMessage(user.getUserName() + " added to " + group.getName() + " Successful!"));
+            accessControll.addUserToGroup(selectedUser.getUserName(), selectedGroup.getName());
+            context.addMessage(null, new FacesMessage(selectedUser.getUserName() + " added to " + selectedGroup.getName() + " Successful!"));
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
-            context.getMessages();
+
         }
     }
 
@@ -246,7 +246,7 @@ public class OlspsController implements Serializable {
             context.addMessage(null, new FacesMessage("Group" + group.getName() + " " + "deleted!"));
             groupsList.clear();
             findAllGroups();
-            Ajax.update("deletefrmgrpid:usergroupsid");            
+            Ajax.update("deletefrmgrpid:usergroupsid");
         } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception excxception) {
             excxception.printStackTrace();
         }
@@ -313,10 +313,12 @@ public class OlspsController implements Serializable {
      * facilitis to take care of datatable  
      */
     public void onRowEdit(RowEditEvent event) {
+        FacesContext context = FacesContext.getCurrentInstance();
         try {
+            if(event.getObject()!= null && event.getObject() instanceof User){
             accessControll.updateUser((User) event.getObject());
-            FacesMessage msg = new FacesMessage("Success", ((User) event.getObject()).getId() + " Edited");
-            FacesContext.getCurrentInstance().addMessage(null, msg);
+            context.addMessage("Success", new FacesMessage(event.getObject() + " Edited"));
+            }
         } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception ex) {
             java.util.logging.Logger.getLogger(OlspsController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }

@@ -6,12 +6,12 @@
 package com.olsps.olspsManagement.app.controller;
 
 import com.olsps.olspsaccesscontrolapi.User;
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
 /**
  *
@@ -20,24 +20,32 @@ import javax.faces.convert.FacesConverter;
 @FacesConverter("userConverter")
 public class UserConveter implements Converter {
 
+    @Inject
+    OlspsController olspsController;
+
     @Override
-    public User getAsObject(FacesContext fc, UIComponent uic, String value) {
+    public Object getAsObject(FacesContext fc, UIComponent uic, String value) {
         if (value != null && value.trim().length() > 0) {
             try {
-                OlspsController service = (OlspsController) fc.getExternalContext().getApplicationMap().get("userConverter");
-                return (User) service.getUserList().get(Integer.parseInt(value));
-            } catch (NumberFormatException e) {
-                throw new ConverterException(new FacesMessage(FacesMessage.SEVERITY_ERROR, "Conversion Error", "Not a valid theme."));
+                for (User userObj : olspsController.getUserList()) {
+                    if (userObj.getUserName().equals(value)) {
+                        return userObj;
+                    }
+                }
+                return null;
+            } catch (ConverterException e) {
+               e.printStackTrace();
             }
         } else {
             return null;
         }
+        return null;
     }
 
     @Override
-    public String getAsString(FacesContext fc, UIComponent uic, Object object) {
-        if (object != null) {
-            return String.valueOf(((Object) object));
+    public String getAsString(FacesContext fc, UIComponent uic, Object value) {
+        if (value != null && value instanceof User) {
+            return ((User) value).getUserName();
         } else {
             return null;
         }

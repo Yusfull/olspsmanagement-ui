@@ -19,15 +19,16 @@ import javax.inject.Inject;
  */
 @FacesConverter("groupsConverter")
 public class GroupsConveter implements Converter {
+
     @Inject
-    OlspsController aOlspsController;
-    
+    OlspsController olspsController;
+
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
         if (value != null && value.trim().length() > 0) {
-            try {                
-                for (Group g: aOlspsController.getGroupsList()){
-                    if (g.getName().equals(value)){
+            try {
+                for (Group g : olspsController.getGroupsList()) {
+                    if (g.getName().equals(value)) {
                         return g;
                     }
                 }
