@@ -55,20 +55,21 @@ public class OlspsController implements Serializable {
     private User selectedUser;
     private Group selectedGroup;
     //String groupName;
-    List<User> userList;
-    List<User> toGroupUser = new ArrayList();
-    List<Group> groupsList = new ArrayList();
-    List<User> filteredUsers;
+    private List<User> userList;
+    private List<User> toGroupUser = new ArrayList<>();
+    private List<Group> groupsList = new ArrayList<>();
+    private List<User> notinGroupList = new ArrayList<>();
+    private List<User> inList = new ArrayList<>();
+    private List<User> filteredUsers;
 
     @PostConstruct
     public void init() {
 
-        //userList = new ArrayList();
-        //userModel.setSource(getUserList());
         findAllUsers();
-        userModel = new DualListModel<>(userList, toGroupUser);
+        // userModel = new DualListModel<>(notinGroupList, inList);
         findAllUsers();
         findAllGroups();
+
     }
 
     //default constructor
@@ -166,8 +167,25 @@ public class OlspsController implements Serializable {
         this.selectedGroupValue = selectedGroupValue;
     }
 
+    public List<User> getNotinGroupList() {
+        return notinGroupList;
+    }
+
+    public void setNotinGroupList(List<User> notinGroupList) {
+        this.notinGroupList = notinGroupList;
+    }
+
+    public List<User> getInList() {
+        return inList;
+    }
+
+    public void setInList(List<User> inList) {
+        this.inList = inList;
+    }
+
     public void login(String uname, String pname) {
         FacesContext context = FacesContext.getCurrentInstance();
+        log.log(Priority.DEBUG, "Constructor logging info:");
         try {
             boolean validate = accessControll.isUserCredentialsValid(uname, pname);
             if (validate) {
@@ -186,7 +204,7 @@ public class OlspsController implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
             accessControll.addUser(user);
-            context.addMessage(null, new FacesMessage("Successful", "Your message: "));
+            context.addMessage(null, new FacesMessage("Successful"));
         } catch (RecordExistsException_Exception rec) {
             rec.getStackTrace();
         }
@@ -236,6 +254,27 @@ public class OlspsController implements Serializable {
         } finally {
 
         }
+    }
+
+    public List<User> editUserGroups() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            for (User user1 : userList) {
+                boolean value = accessControll.isUserInGroup(user1.getUserName(), selectedGroup.getName());
+                if (value) {
+                    inList.add(user1);
+                    System.out.println("Users in a group:" + " " + user1.getFirstName());
+                    return inList;
+                } else {
+                    notinGroupList.add(user1);
+                    System.out.println("Users not in a group:" + " " + user1.getFirstName());
+                }
+                return notinGroupList;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return null;
     }
 
     public Group deleteGroup() {
@@ -315,9 +354,9 @@ public class OlspsController implements Serializable {
     public void onRowEdit(RowEditEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
-            if(event.getObject()!= null && event.getObject() instanceof User){
-            accessControll.updateUser((User) event.getObject());
-            context.addMessage("Success", new FacesMessage(event.getObject() + " Edited"));
+            if (event.getObject() != null && event.getObject() instanceof User) {
+                accessControll.updateUser((User) event.getObject());
+                context.addMessage("Success", new FacesMessage(event.getObject() + " Edited"));
             }
         } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception ex) {
             java.util.logging.Logger.getLogger(OlspsController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);

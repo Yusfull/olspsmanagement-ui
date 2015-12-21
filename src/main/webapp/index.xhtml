@@ -15,11 +15,8 @@
             </f:facet>
         </h:head>
         <h:body>
-
-            */ add new user form /*
             <h:form id="form1">
                 <p:growl id="growl1" sticky="true" showDetail="true" life="3000" />
-                */ add new user dialog /*
                 <p:dialog id="div1"  header="Add User" widgetVar="addWidget">
                     <h:panelGrid columns="2" cellpadding="5" border="0">
                         <p:outputLabel id="firstname" for="firstName" value="First name:"/>
@@ -37,15 +34,12 @@
                                          oncomplete="updateUserTableContents()"></p:commandButton>
                     </h:panelGrid>
                 </p:dialog>
-                */ end of add new user dialog /*
-                */end of add new user form /*
                 <p:remoteCommand name="updateUserTableContents"
                                  update="mainForm:accessViewTab:userTable" />
             </h:form>
 
             <h:form id="form">
                 <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
-                */ login dialog /*
                 <p:dialog header="Login" widgetVar="loginWidget">
                     <h:panelGrid columns="2" cellpadding="5" border="0">
                         <p:outputLabel id="username" for="name" value="Username"/>
@@ -59,9 +53,7 @@
 
                     </h:panelGrid>
                 </p:dialog>
-                */ end of login dialog /*
             </h:form>
-
             <h:form id="addgroup1">
                 <p:growl id="addgroup1growl" sticky="true" showDetail="true" life="3000" />
                 */ add a group dialog /*
@@ -74,29 +66,26 @@
                         </p:commandButton>
                     </h:panelGrid>
                 </p:dialog>
-                */ end of add a group dialog /*
             </h:form>
             <h:form id="addUserToGroup">
                 <p:growl id="addUserToGroupgrowl" sticky="false" showDetail="true" life="3000" />
-                */ add a group dialog /*
                 <p:dialog header="add User To a Group" widgetVar="addUserToGroupWidget">
                     <h:panelGrid columns="2" cellpadding="5" border="0">
                         <p:outputLabel id="username11" value="Username"/>
                         <p:selectOneMenu id="usergroupX" value="#{olspsController.selectedUser}" height="100"  panelStyle="height:170px"  converter="userConverter" var="temp" style="width:180px">
                             <f:selectItems value="#{olspsController.userList}" var="user" itemLabel="#{user.userName}" itemValue="#{user.userName}" />
                         </p:selectOneMenu>
-                     
+
                         <p:outputLabel id="groupname" value="Group Name"/>
                         <p:selectOneMenu id="usergroupsidX" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px">
                             <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" itemValue="#{data.name}"/>
                         </p:selectOneMenu>
-                        
+
                         <p:commandButton id="groupbutton" update="addUserToGroupgrowl" value="Submit" action="#{olspsController.addUserToGroup()}">
                             <f:ajax execute="name" render="user_session"/>
                         </p:commandButton>
                     </h:panelGrid>
                 </p:dialog>
-                */ end of add a group dialog /*
             </h:form>
             <h:form id="deletefrmgrpid">
                 <p:growl id="deleteGrpGrowl" life="1000" autoUpdate="true"/>
@@ -109,18 +98,33 @@
                 </p:dialog>
 
             </h:form>
-
-            */Start of view user data dialog /*
             <h:form id="userSummaryId">
                 <p:growl id="userSummaryGrowl" life="1000" autoUpdate="true"/>
                 <p:dialog id="summaryDialog" header="User Summary" widgetVar="summaryWidget">
                     <p:layout style="min-width:1035px;min-height:410px;" >
-                        <p:layoutUnit position="west" resizable="false"  size="345"   header="User">
+                        <p:layoutUnit position="west"  resizable="false"  size="345"    header="User">
+                            <p:panelGrid id="devide" columns="1">
+                                <p:selectOneMenu id="usergroups" value="#{olspsController.group.name}" height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px"
+                                                 filter="true" filterMatchMode="startsWith">
+                                    <f:selectItems value="#{olspsController.groupsList}" var="group" itemLabel="#{group.name}" itemValue="#{group.name}" />
+                                </p:selectOneMenu>
+                                <p:separator/>
 
-                            <p:selectOneMenu id="usergroups" value="#{olspsController.user.firstName}" height="100"  panelStyle="height:170px"  converter="userConverter" var="temp" style="width:180px"
-                                             filter="true" filterMatchMode="startsWith">
-                                <f:selectItems value="#{olspsController.userList}" var="user" itemLabel="#{user.firstName}" itemValue="#{user.firstName}" />
-                            </p:selectOneMenu>
+                                <h:selectOneListbox id="notIngroup" size="5"   >
+                                    <f:selectItem itemValue="525" itemLabel="1"/>
+                                    <f:selectItem itemValue="535" itemLabel="2" />
+                                    <f:selectItem itemValue="535" itemLabel="3" />
+                                    <f:selectItem itemValue="535" itemLabel="4" />
+                                </h:selectOneListbox>
+
+                                <h:selectOneListbox id="ingroup" size="5"   >
+                                    <f:selectItem itemValue="525" itemLabel="1"/>
+                                    <f:selectItem itemValue="535" itemLabel="2" />
+                                    <f:selectItem itemValue="535" itemLabel="3" />
+                                    <f:selectItem itemValue="535" itemLabel="4" />
+                                </h:selectOneListbox>
+                            </p:panelGrid>
+
                         </p:layoutUnit>
 
                         <p:layoutUnit position="center" resizable="false" size="345" header="Groups">
@@ -265,26 +269,30 @@
                                 <p:tab title="User Groups">
 
                                     <p:layout  style="min-width:300px;min-height:600px;">
-                                        <p:layoutUnit position="west" resizable="false"  size="500"  header="Goups">
+                                        <p:layoutUnit position="west" resizable="false"  size="500"  header="Groups">
                                             <p:panel>
-                                                <p:selectOneMenu id="usergroupsid" value="#{olspsController.selectedGroup}" style="width: 200px">
-                                                    <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" itemValue="#{data.name}"/>
+                                                <p:selectOneMenu id="usergroupsid" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px" >
+                                                    <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" 
+                                                                   itemValue="#{data.name}"/>
                                                 </p:selectOneMenu>
                                             </p:panel>
                                             <p:separator/>
-                                            <p:panel>
-                                                <facet name="title">
-                                                    <p:outputLabel value="Members"/>
-                                                </facet>
-                                                <p:pickList id="picklistid" value="#{olspsController.userModel}" var="item" itemValue="#{item.id}" itemLabel="#{item.userName}" >
+                                            <h:panelGrid id="con" columns="3" cellpadding="20"  >
 
-                                                </p:pickList>  
+                                                <p:selectOneListbox id="activitiesZZ" value="#{olspsController.selectedUser}" converter="userConverter" style="width: 150px"  >
+                                                    <f:selectItems id="itm" value="#{olspsController.notinGroupList}" var="ntg" 
+                                                                   itemValue="#{ntg.userName}" itemLabel="#{ntg.userName}"/>
+                                                </p:selectOneListbox>
 
-                                            </p:panel>
-                                            <p:outputLabel id="identity" value="#{olspsController.selectedGroup}"/>
+                                                <h:commandButton id="sa" value="filter" actionListener="#{olspsController.editUserGroups()}"/>
+
+                                                <p:selectOneListbox id="activitiesZ" style="width: 150px"  >
+                                                    <f:selectItem itemValue="535" itemLabel="Finance" />
+                                                    <f:selectItem itemValue="535" itemLabel="Admin" />
+                                                    <f:selectItem itemValue="535" itemLabel="Projects" />
+                                                </p:selectOneListbox>
+                                            </h:panelGrid>
                                         </p:layoutUnit>
-
-
 
                                         <p:layoutUnit position="center" resizable="false" size="345" header="Activities">
                                             <h:selectOneListbox id="activities" size="5"  >

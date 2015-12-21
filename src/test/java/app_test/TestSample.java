@@ -13,6 +13,7 @@ import com.olsps.olspsaccesscontrolapi.NoSuchAlgorithmException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotFoundException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotUniqueException_Exception;
 import com.olsps.olspsaccesscontrolapi.User;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +33,8 @@ public class TestSample {
     AccessControllerWebService_Service serviceFactory;
     User user = new User();
     Group group = new Group();
+    private List<User> userList = new ArrayList<>();
+    
     
     public TestSample() {
         serviceFactory = new AccessControllerWebService_Service();
@@ -110,7 +113,7 @@ public class TestSample {
             ex.getMessage();
         }
     }
-
+  
     //@Test(priority = 0)
     void testFindGroups() {
         try {
