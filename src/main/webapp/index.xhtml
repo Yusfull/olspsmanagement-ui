@@ -100,34 +100,25 @@
             </h:form>
             <h:form id="userSummaryId">
                 <p:growl id="userSummaryGrowl" life="1000" autoUpdate="true"/>
-                <p:dialog id="summaryDialog" header="User Summary" widgetVar="summaryWidget">
-                    <p:layout style="min-width:1035px;min-height:410px;" >
-                        <p:layoutUnit position="west"  resizable="false"  size="345"    header="User">
-                            <p:panelGrid id="devide" columns="1">
+                <p:dialog id="summaryDialog" header="User Summary" widgetVar="summaryWidget" resizable="false" height="450px">
+                    <p:layout style="min-width:1035px;height:350px;" >
+                        <p:layoutUnit position="west"  resizable="true" size="345"  style="height: 200px"   header="User">
+                            <h:panelGrid id="devide" columns="1"  >
                                 <p:selectOneMenu id="usergroups" value="#{olspsController.group.name}" height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px"
                                                  filter="true" filterMatchMode="startsWith">
                                     <f:selectItems value="#{olspsController.groupsList}" var="group" itemLabel="#{group.name}" itemValue="#{group.name}" />
                                 </p:selectOneMenu>
                                 <p:separator/>
+                   
+                                <p:pickList id="pickList" value="#{olspsController.userModel}" var="picklistVar" >
+                                    
+                                </p:pickList>
 
-                                <h:selectOneListbox id="notIngroup" size="5"   >
-                                    <f:selectItem itemValue="525" itemLabel="1"/>
-                                    <f:selectItem itemValue="535" itemLabel="2" />
-                                    <f:selectItem itemValue="535" itemLabel="3" />
-                                    <f:selectItem itemValue="535" itemLabel="4" />
-                                </h:selectOneListbox>
-
-                                <h:selectOneListbox id="ingroup" size="5"   >
-                                    <f:selectItem itemValue="525" itemLabel="1"/>
-                                    <f:selectItem itemValue="535" itemLabel="2" />
-                                    <f:selectItem itemValue="535" itemLabel="3" />
-                                    <f:selectItem itemValue="535" itemLabel="4" />
-                                </h:selectOneListbox>
-                            </p:panelGrid>
+                            </h:panelGrid>
 
                         </p:layoutUnit>
 
-                        <p:layoutUnit position="center" resizable="false" size="345" header="Groups">
+                        <p:layoutUnit position="center" resizable="false" size="345" style="height: 200px" header="Groups">
                             <h:selectOneListbox id="members" size="5"   >
                                 <f:selectItem itemValue="525" itemLabel="Support"/>
                                 <f:selectItem itemValue="535" itemLabel="Analytics" />
@@ -136,7 +127,7 @@
                             </h:selectOneListbox>
                         </p:layoutUnit>
 
-                        <p:layoutUnit position="east" resizable="false" size="345" header="Activities">
+                        <p:layoutUnit position="east" resizable="false" size="345" style="height: 200px" header="Activities">
                             <h:selectOneListbox id="activities" size="5"  >
                                 <f:selectItem itemValue="535" itemLabel="Finance" />
                                 <f:selectItem itemValue="535" itemLabel="Admin" />
@@ -277,25 +268,33 @@
                                                 </p:selectOneMenu>
                                             </p:panel>
                                             <p:separator/>
-                                            <h:panelGrid id="con" columns="3" cellpadding="20"  >
+                                            <p:panel>
+                                                <h:panelGrid id="con" columns="3" cellpadding="10"   >
 
-                                                <p:selectOneListbox id="activitiesZZ" value="#{olspsController.selectedUser}" converter="userConverter" style="width: 150px"  >
-                                                    <f:selectItems id="itm" value="#{olspsController.notinGroupList}" var="ntg" 
-                                                                   itemValue="#{ntg.userName}" itemLabel="#{ntg.userName}"/>
-                                                </p:selectOneListbox>
+                                                    <p:selectOneListbox id="activitiesZZ" value="#{olspsController.selectedUser}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
+                                                        <f:selectItems id="itm" value="#{olspsController.inList}" var="ingroup" 
+                                                                       itemValue="#{ingroup.userName}" itemLabel="#{ingroup.userName}"/>
+                                                    </p:selectOneListbox>
 
-                                                <h:commandButton id="sa" value="filter" actionListener="#{olspsController.editUserGroups()}"/>
+                                                    <h:panelGrid id="trying" columns="1" cellpadding="5"> 
+                                                        <h:commandButton id="sa" value="filter" actionListener="#{olspsController.editUserGroups()}"/>
+                                                        <h:commandButton id="sad" value="add" actionListener="#{olspsController.addUserToGroup()}">
+                                                            <f:ajax id="ajaxId" render="activitiesZZ"/>
+                                                        </h:commandButton>                    
+                                                    </h:panelGrid>
 
-                                                <p:selectOneListbox id="activitiesZ" style="width: 150px"  >
-                                                    <f:selectItem itemValue="535" itemLabel="Finance" />
-                                                    <f:selectItem itemValue="535" itemLabel="Admin" />
-                                                    <f:selectItem itemValue="535" itemLabel="Projects" />
-                                                </p:selectOneListbox>
-                                            </h:panelGrid>
+                                                    <p:selectOneListbox id="activitiesZ" value="#{olspsController.user}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
+                                                        <f:selectItems id="values" value="#{olspsController.notinGroupList}" var="valuesVar" 
+                                                                       itemValue="#{valuesVar.userName}" 
+                                                                       itemLabel="#{valuesVar.userName}" />
+
+                                                    </p:selectOneListbox>
+                                                </h:panelGrid>
+                                            </p:panel>
                                         </p:layoutUnit>
 
                                         <p:layoutUnit position="center" resizable="false" size="345" header="Activities">
-                                            <h:selectOneListbox id="activities" size="5"  >
+                                            <h:selectOneListbox id="activities" size="2"  >
                                                 <f:selectItem itemValue="535" itemLabel="Finance" />
                                                 <f:selectItem itemValue="535" itemLabel="Admin" />
                                                 <f:selectItem itemValue="535" itemLabel="Projects" />

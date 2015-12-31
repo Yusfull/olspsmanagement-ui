@@ -15,6 +15,7 @@ import com.olsps.olspsaccesscontrolapi.User;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
@@ -55,7 +56,7 @@ public class OlspsController implements Serializable {
     private User selectedUser;
     private Group selectedGroup;
     //String groupName;
-    private List<User> userList;
+    private List<User> userList = new ArrayList<>();
     private List<User> toGroupUser = new ArrayList<>();
     private List<Group> groupsList = new ArrayList<>();
     private List<User> notinGroupList = new ArrayList<>();
@@ -66,7 +67,7 @@ public class OlspsController implements Serializable {
     public void init() {
 
         findAllUsers();
-        // userModel = new DualListModel<>(notinGroupList, inList);
+        userModel = new DualListModel<>(userList, notinGroupList);
         findAllUsers();
         findAllGroups();
 
@@ -258,23 +259,25 @@ public class OlspsController implements Serializable {
 
     public List<User> editUserGroups() {
         FacesContext context = FacesContext.getCurrentInstance();
-        try {
-            for (User user1 : userList) {
-                boolean value = accessControll.isUserInGroup(user1.getUserName(), selectedGroup.getName());
-                if (value) {
-                    inList.add(user1);
-                    System.out.println("Users in a group:" + " " + user1.getFirstName());
-                    return inList;
-                } else {
-                    notinGroupList.add(user1);
-                    System.out.println("Users not in a group:" + " " + user1.getFirstName());
+        boolean value = true;
+        while (value) {
+            try {
+                for (User user1 : userList) {
+                    value = accessControll.isUserInGroup(user1.getUserName(), selectedGroup.getName());
+                    if (!value) {
+                        notinGroupList.add(user1);
+                        System.out.println("Users in a group:" + " " + user1.getFirstName());
+                    } else if (value) {
+                        inList.add(user1);
+                        System.out.println("Users not in a group:" + " " + user1.getFirstName());
+                    }
                 }
-                return notinGroupList;
+            } catch (RecordNotFoundException_Exception ex) {
+                java.util.logging.Logger.getLogger(OlspsController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (Exception exception) {
-            exception.printStackTrace();
+            return null;
         }
-        return null;
+        return inList;
     }
 
     public Group deleteGroup() {
