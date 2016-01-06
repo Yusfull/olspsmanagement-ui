@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.olsps.olspsManagement.app.controller;
+package com.olsps.olspsManagement.app.converter;
 
+import com.olsps.olspsManagement.app.controller.OlspsController;
 import com.olsps.olspsaccesscontrolapi.Group;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;

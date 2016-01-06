@@ -12,6 +12,7 @@ import com.olsps.olspsaccesscontrolapi.InvalidKeySpecException_Exception;
 import com.olsps.olspsaccesscontrolapi.NoSuchAlgorithmException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotFoundException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotUniqueException_Exception;
+import com.olsps.olspsaccesscontrolapi.Role;
 import com.olsps.olspsaccesscontrolapi.User;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,18 +29,18 @@ import org.testng.annotations.BeforeMethod;
  * @author Eusuph
  */
 public class TestSample {
-    
+
     private static AccessControllerWebService accessControll;
     AccessControllerWebService_Service serviceFactory;
     User user = new User();
     Group group = new Group();
+    Role role = new Role();
     private List<User> userList = new ArrayList<>();
-    
-    
+
     public TestSample() {
         serviceFactory = new AccessControllerWebService_Service();
         accessControll = serviceFactory.getAccessControllerWebServicePort();
-        
+
     }
 
     // TODO add test methods here.
@@ -47,11 +48,11 @@ public class TestSample {
     //
     // @Test(priority = 0)
     public void hello() {
-        
+
         System.out.println("This is a test !!");
     }
-    
-   // @Test(priority = 0)
+
+    // @Test(priority = 0)
     public void login() throws InvalidKeySpecException_Exception, NoSuchAlgorithmException_Exception, RecordNotFoundException_Exception, RecordNotUniqueException_Exception {
         String uname = "khungani";
         String pname = "devteam";
@@ -87,7 +88,7 @@ public class TestSample {
             System.err.println("***" + name);
             user.setFirstName(username);
             System.out.println("What is in there: " + username);
-            
+
             accessControll.updateUser(user);
         } catch (RecordNotUniqueException_Exception | RecordNotFoundException_Exception tx) {
             tx.printStackTrace();
@@ -113,7 +114,7 @@ public class TestSample {
             ex.getMessage();
         }
     }
-  
+
     //@Test(priority = 0)
     void testFindGroups() {
         try {
@@ -126,17 +127,18 @@ public class TestSample {
         }
     }
 
-    // @Test(priority = 4)
+    //@Test(priority = 0)
     void testAssignUserToGroup() {
         try {
-            accessControll.addUserToGroup("Yusufa", "Dev");
+            accessControll.addUserToGroup("adam15422", "Barcelona");
             Assert.assertTrue(true);
         } catch (Exception ex) {
             ex.getStackTrace();
             ex.printStackTrace();
         }
     }
-  // @Test(priority = 0)
+    // @Test(priority = 0)
+
     public void deleteGroup() {
         try {
             String groupToDelete = "MSL";
@@ -152,7 +154,7 @@ public class TestSample {
     //@Test(priority = 5)
     public void testFindUsers() {
         List<User> registeredUsers;
-        
+
         try {
             registeredUsers = accessControll.findUsers("%");
             if (registeredUsers.isEmpty()) {
@@ -179,12 +181,12 @@ public class TestSample {
             if (user.getFirstName().equals("Cassim")) {
                 Assert.assertTrue(true);
             }
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-     
+
     //@Test
     public void testAddGroups() {
         try {
@@ -193,24 +195,33 @@ public class TestSample {
             if (!groups.isEmpty()) {
                 Assert.assertTrue(true);
             }
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-    
+
+    //@Test(priority = 0)
+    void addRole() {
+        try {
+            accessControll.addRole("Administrator");
+            System.out.println(role.getName());
+        } catch (Exception e) {
+        }
+    }
+
     @BeforeClass
     public static void setUpClass() throws AssertionError {
     }
-    
+
     @AfterClass
     public static void tearDownClass() throws AssertionError {
     }
-    
+
     @BeforeMethod
     public void setUpMethod() throws AssertionError {
     }
-    
+
     @AfterMethod
     public void tearDownMethod() throws AssertionError {
     }

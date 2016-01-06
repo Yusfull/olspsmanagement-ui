@@ -67,6 +67,21 @@
                     </h:panelGrid>
                 </p:dialog>
             </h:form>
+            
+            <h:form id="addrole">
+                <p:growl id="addrolegrowl" sticky="true" showDetail="true" life="3000" />
+                
+                <p:dialog header="Add Role" widgetVar="addroleWidget">
+                    <h:panelGrid columns="2" cellpadding="5" border="0">
+                        <p:outputLabel id="roleName" for="name1" value="Role Name:"/>
+                        <p:inputText id="name1" label="rolename"  value="#{olspsController.role.name}" required="true"/>
+                        <p:commandButton id="btn11" update="addrolegrowl" value="Submit" action="#{olspsController.addRole()}">
+                            <f:ajax execute="name" render="user_session"/>
+                        </p:commandButton>
+                    </h:panelGrid>
+                </p:dialog>
+            </h:form>
+            
             <h:form id="addUserToGroup">
                 <p:growl id="addUserToGroupgrowl" sticky="false" showDetail="true" life="3000" />
                 <p:dialog header="add User To a Group" widgetVar="addUserToGroupWidget">
@@ -102,20 +117,19 @@
                 <p:growl id="userSummaryGrowl" life="1000" autoUpdate="true"/>
                 <p:dialog id="summaryDialog" header="User Summary" widgetVar="summaryWidget" resizable="false" height="450px">
                     <p:layout style="min-width:1035px;height:350px;" >
-                        <p:layoutUnit position="west"  resizable="true" size="345"  style="height: 200px"   header="User">
-                            <h:panelGrid id="devide" columns="1"  >
+                        <p:layoutUnit position="west"  resizable="false" size="490"  style="height: 200px"   header="User Groups">
+                            <h:panelGrid id="devide" columns="1" >
                                 <p:selectOneMenu id="usergroups" value="#{olspsController.group.name}" height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px"
                                                  filter="true" filterMatchMode="startsWith">
                                     <f:selectItems value="#{olspsController.groupsList}" var="group" itemLabel="#{group.name}" itemValue="#{group.name}" />
                                 </p:selectOneMenu>
                                 <p:separator/>
-                   
-                                <p:pickList id="pickList" value="#{olspsController.userModel}" var="picklistVar" >
-                                    
+
+                                <p:pickList converter="userPicklistConverter" value="#{olspsController.userModel}" var="valueVar" itemValue="#{valueVar}" itemLabel="#{valueVar}"  >
+                                    <f:facet name="sourceCaption">Available Variables</f:facet>
+                                    <f:facet name="targetCaption">Associated Variables</f:facet>
                                 </p:pickList>
-
                             </h:panelGrid>
-
                         </p:layoutUnit>
 
                         <p:layoutUnit position="center" resizable="false" size="345" style="height: 200px" header="Groups">
@@ -194,6 +208,12 @@
                                 <p:menuitem value="Search groups" url="http://www.primefaces.org/themes.html" disabled="true" ></p:menuitem>
 
                             </p:menuButton>
+                            <p:separator></p:separator>
+                            <p:menuButton id="role" value="Roles menu    ">
+                                <p:menuitem id="addRole" value="Add" onclick="PF('addroleWidget').show()" disabled="false"/>
+                                <p:menuitem id="deleteRole" value="Delete"/>
+                                <p:menuitem id="editRole" value="edit"/>
+                            </p:menuButton>
 
                         </p:layoutUnit>
                         <p:layoutUnit position="east" size="175" header="Session" collapsible="true" resizable="true">
@@ -269,24 +289,25 @@
                                             </p:panel>
                                             <p:separator/>
                                             <p:panel>
+                                                <f:facet name="sourceCaption">Available Variables</f:facet>
                                                 <h:panelGrid id="con" columns="3" cellpadding="10"   >
 
                                                     <p:selectOneListbox id="activitiesZZ" value="#{olspsController.selectedUser}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
-                                                        <f:selectItems id="itm" value="#{olspsController.inList}" var="ingroup" 
-                                                                       itemValue="#{ingroup.userName}" itemLabel="#{ingroup.userName}"/>
+                                                        <f:selectItems id="itm" value="#{olspsController.notinGroupList}" var="ingroupUser" 
+                                                                       itemValue="#{ingroupUser.userName}" itemLabel="#{ingroupUser.userName}"/>
                                                     </p:selectOneListbox>
 
                                                     <h:panelGrid id="trying" columns="1" cellpadding="5"> 
                                                         <h:commandButton id="sa" value="filter" actionListener="#{olspsController.editUserGroups()}"/>
-                                                        <h:commandButton id="sad" value="add" actionListener="#{olspsController.addUserToGroup()}">
+                                                        <h:commandButton id="sad" value="add" actionListener="#{olspsController.adToGroup()}">
                                                             <f:ajax id="ajaxId" render="activitiesZZ"/>
                                                         </h:commandButton>                    
                                                     </h:panelGrid>
 
-                                                    <p:selectOneListbox id="activitiesZ" value="#{olspsController.user}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
-                                                        <f:selectItems id="values" value="#{olspsController.notinGroupList}" var="valuesVar" 
-                                                                       itemValue="#{valuesVar.userName}" 
-                                                                       itemLabel="#{valuesVar.userName}" />
+                                                    <p:selectOneListbox id="activitiesZ" value="#{olspsController.selectedUser}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
+                                                        <f:selectItems id="values" value="#{olspsController.inList}" var="valuesVar" 
+                                                                       itemValue="#{valuesVar.firstName}" 
+                                                                       itemLabel="#{valuesVar.firstName}" />
 
                                                     </p:selectOneListbox>
                                                 </h:panelGrid>

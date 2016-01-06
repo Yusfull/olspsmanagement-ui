@@ -11,6 +11,7 @@ import com.olsps.olspsaccesscontrolapi.Group;
 import com.olsps.olspsaccesscontrolapi.RecordExistsException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotFoundException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotUniqueException_Exception;
+import com.olsps.olspsaccesscontrolapi.Role;
 import com.olsps.olspsaccesscontrolapi.User;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class OlspsController implements Serializable {
 
     User user = new User();
     Group group = new Group();
+    Role role = new Role();
     boolean editable;
     String selectedGroupValue;
 
@@ -55,7 +57,6 @@ public class OlspsController implements Serializable {
 
     private User selectedUser;
     private Group selectedGroup;
-    //String groupName;
     private List<User> userList = new ArrayList<>();
     private List<User> toGroupUser = new ArrayList<>();
     private List<Group> groupsList = new ArrayList<>();
@@ -134,6 +135,14 @@ public class OlspsController implements Serializable {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public User getSelectedUser() {
@@ -257,6 +266,18 @@ public class OlspsController implements Serializable {
         }
     }
 
+    public void adToGroup() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            accessControll.addUserToGroup(selectedUser.getUserName(), selectedGroup.getName());
+            context.addMessage(null, new FacesMessage(selectedUser.getUserName() + " added to " + selectedGroup.getName() + " Successful!"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+
+        }
+    }
+
     public List<User> editUserGroups() {
         FacesContext context = FacesContext.getCurrentInstance();
         boolean value = true;
@@ -266,10 +287,10 @@ public class OlspsController implements Serializable {
                     value = accessControll.isUserInGroup(user1.getUserName(), selectedGroup.getName());
                     if (!value) {
                         notinGroupList.add(user1);
-                        System.out.println("Users in a group:" + " " + user1.getFirstName());
+                        System.out.println("Users not in a group:" + " " + user1.getFirstName());
                     } else if (value) {
                         inList.add(user1);
-                        System.out.println("Users not in a group:" + " " + user1.getFirstName());
+                        System.out.println("Users in a group:" + " " + user1.getFirstName());
                     }
                 }
             } catch (RecordNotFoundException_Exception ex) {
@@ -385,7 +406,16 @@ public class OlspsController implements Serializable {
             } finally {
 
             }
+        }
+    }
 
+    public void addRole() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            accessControll.addRole(role.getName());
+            context.addMessage(null, new FacesMessage("Successful"));
+        } catch (Exception exception) {
+            exception.printStackTrace();
         }
     }
 }
