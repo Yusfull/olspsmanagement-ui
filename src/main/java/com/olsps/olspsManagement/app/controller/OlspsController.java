@@ -57,9 +57,11 @@ public class OlspsController implements Serializable {
 
     private User selectedUser;
     private Group selectedGroup;
+    private Role selectedRole;
     private List<User> userList = new ArrayList<>();
     private List<User> toGroupUser = new ArrayList<>();
     private List<Group> groupsList = new ArrayList<>();
+    private List<Role> rolesList = new ArrayList<>();
     private List<User> notinGroupList = new ArrayList<>();
     private List<User> inList = new ArrayList<>();
     private List<User> filteredUsers;
@@ -70,6 +72,7 @@ public class OlspsController implements Serializable {
         findAllUsers();
         userModel = new DualListModel<>(userList, notinGroupList);
         findAllUsers();
+        findRoles();
         findAllGroups();
 
     }
@@ -121,6 +124,15 @@ public class OlspsController implements Serializable {
         this.groupsList = groupsList;
     }
 
+    public List<Role> getRolesList() {
+        return rolesList;
+    }
+
+    public void setRolesList(List<Role> rolesList) {
+        this.rolesList = rolesList;
+    }
+    
+
     public User getUser() {
         return user;
     }
@@ -161,6 +173,14 @@ public class OlspsController implements Serializable {
         this.selectedGroup = selectedGroup;
     }
 
+    public Role getSelectedRole() {
+        return selectedRole;
+    }
+
+    public void setSelectedRole(Role selectedRole) {
+        this.selectedRole = selectedRole;
+    }
+    
     public List<User> getToGroupUser() {
         return toGroupUser;
     }
@@ -304,7 +324,7 @@ public class OlspsController implements Serializable {
     public Group deleteGroup() {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
-            context.addMessage(null, new FacesMessage("Group will be permanently deleted! Are you sure ? ", group.getName()));
+            context.addMessage(null, new FacesMessage("Please confirm deleted!"));
             accessControll.deleteGroup(selectedGroup.getName());
             context.addMessage(null, new FacesMessage("Group" + group.getName() + " " + "deleted!"));
             groupsList.clear();
@@ -328,6 +348,38 @@ public class OlspsController implements Serializable {
             context.getMessages();
         }
         return null;
+    }
+      public void addRole() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        try {
+            accessControll.addRole(role.getName());
+            context.addMessage(null, new FacesMessage("Successful"));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+      public List<Role> findRoles(){
+          try{
+              rolesList = accessControll.findRoles("%");
+              if(!rolesList.isEmpty()){
+                  return rolesList;
+              }else{
+                  return null;
+              }
+          }catch(Exception exception){
+              exception.printStackTrace();
+          }
+          return  null;
+      }
+    
+    public void assignRoletoGroups(){
+        FacesContext context = FacesContext.getCurrentInstance();
+        try{
+            accessControll.assignRoleToGroup(selectedRole.getName(), selectedGroup.getName());
+            context.addMessage(null, new FacesMessage("Role assigned"));
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
     }
 
     /*
@@ -409,13 +461,5 @@ public class OlspsController implements Serializable {
         }
     }
 
-    public void addRole() {
-        FacesContext context = FacesContext.getCurrentInstance();
-        try {
-            accessControll.addRole(role.getName());
-            context.addMessage(null, new FacesMessage("Successful"));
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-    }
+  
 }

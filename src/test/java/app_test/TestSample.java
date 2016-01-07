@@ -137,11 +137,11 @@ public class TestSample {
             ex.printStackTrace();
         }
     }
-    // @Test(priority = 0)
-
+    
+     //@Test(priority = 0)
     public void deleteGroup() {
         try {
-            String groupToDelete = "MSL";
+            String groupToDelete = "Test Grp";
             accessControll.deleteGroup(groupToDelete);
             Assert.assertNull(accessControll.findGroup(groupToDelete), groupToDelete);
         } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception ex) {
@@ -202,7 +202,7 @@ public class TestSample {
     }
 
     //@Test(priority = 0)
-    void addRole() {
+    void testAddRole() {
         try {
             accessControll.addRole("Administrator");
             System.out.println(role.getName());
@@ -210,6 +210,19 @@ public class TestSample {
         }
     }
 
+    //@Test(priority = 0)
+    public void testfindRoles(){
+        try{
+            
+            List<Role> emRoles =  accessControll.findRoles("%");
+            for (Role emRole : emRoles) {
+                System.out.println(emRole.getId());
+            }
+            System.out.println("app_test.TestSample.testfindRoles()");
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+    }
     @BeforeClass
     public static void setUpClass() throws AssertionError {
     }

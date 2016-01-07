@@ -67,10 +67,10 @@
                     </h:panelGrid>
                 </p:dialog>
             </h:form>
-            
+
             <h:form id="addrole">
                 <p:growl id="addrolegrowl" sticky="true" showDetail="true" life="3000" />
-                
+
                 <p:dialog header="Add Role" widgetVar="addroleWidget">
                     <h:panelGrid columns="2" cellpadding="5" border="0">
                         <p:outputLabel id="roleName" for="name1" value="Role Name:"/>
@@ -81,7 +81,7 @@
                     </h:panelGrid>
                 </p:dialog>
             </h:form>
-            
+
             <h:form id="addUserToGroup">
                 <p:growl id="addUserToGroupgrowl" sticky="false" showDetail="true" life="3000" />
                 <p:dialog header="add User To a Group" widgetVar="addUserToGroupWidget">
@@ -101,6 +101,30 @@
                         </p:commandButton>
                     </h:panelGrid>
                 </p:dialog>
+            </h:form>
+            
+            
+            <h:form id="grouproles">
+                <p:growl id="grouprolesgrowl" life="1000" autoUpdate="true"/>
+                <p:dialog id="poupid" header="Add roles to groups" widgetVar="grouprolesWidget" height="90" width="290">
+                    <h:panelGrid id="gridid" columns="2" cellpadding="5" border="0">
+                        <p:outputLabel id="groupz" value="Groups:"/>
+                        <p:selectOneMenu id="groups" value="#{olspsController.selectedGroup}" height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px">
+                            <f:selectItems id="itmid" value="#{olspsController.groupsList}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups.name}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel id="roles" value="Roles"/>
+                        <p:selectOneMenu id="rolesid" value="#{olspsController.selectedRole}" converter="roleConverter" style="width: 200px">
+                            <f:selectItems id="itm1id" value="#{olspsController.rolesList}" var="role" itemLabel="#{role.name}" itemValue="#{role.name}"/>
+                        </p:selectOneMenu>
+
+                        <p:commandButton id="rolebutton" update="grouprolesgrowl" value="Submit" action="#{olspsController.assignRoletoGroups()}">
+                            <f:ajax execute="name" render="user_session"/>
+                        </p:commandButton>
+                    </h:panelGrid>
+
+                </p:dialog>
+
             </h:form>
             <h:form id="deletefrmgrpid">
                 <p:growl id="deleteGrpGrowl" life="1000" autoUpdate="true"/>
@@ -213,6 +237,7 @@
                                 <p:menuitem id="addRole" value="Add" onclick="PF('addroleWidget').show()" disabled="false"/>
                                 <p:menuitem id="deleteRole" value="Delete"/>
                                 <p:menuitem id="editRole" value="edit"/>
+                                <p:menuitem id="rolestogroups" value="Assign Groups" onclick="PF('grouprolesWidget').show()" disabled="false" />
                             </p:menuButton>
 
                         </p:layoutUnit>
