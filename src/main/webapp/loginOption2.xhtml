@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html">
+    <h:head>
+        <meta charset="utf-8"/>
+        <title> UI Login</title> 
+        <link  rel="stylesheet" type='text/css' href="stylesheet/style.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+        <!--//webfonts-->
+    </h:head>
+
+    <body>
+        <div class="main">
+            <form>
+                <h1><span>Admin</span> <lable> Login </lable> </h1>
+                <div class="inset">
+                    <p>
+                        <label for="email">USERNAME</label>
+                        <input type="text" value="#{olspsController.user.userName}" placeholder="username" required="true"/>
+                    </p>
+                    <p>
+                        <label for="password">PASSWORD</label>
+                        <input type="password" value="#{olspsController.user.passwordCypher}" placeholder="password" required="true"/>
+                    </p>
+                    <p>
+                        <input type="checkbox" name="remember" id="remember"/>
+                            <label for="remember">Remember me for 14 days</label>
+                    </p>
+                </div>
+
+                <p class="p-container">
+                    <span><a href="#">Forgot password ?</a></span>
+                    <input type="submit" value="Login"/>
+                </p>
+            </form>
+        </div>  
+        <!--start copyright-->
+        <div class="copy-right">
+            <p> &copy; 2015 OLSOLV Auth Manager. All rights reserved | Design by <a href="http://www.olsps.com/predictive-analytics/">Olsps</a></p> 
+        </div>
+        <!--end-copyright-->
+
+        <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+        <!--webfonts-->
+        <link href='//fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,800' rel='stylesheet' type='text.css'/>
+
+    </body>
+</html>

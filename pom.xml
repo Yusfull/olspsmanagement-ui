@@ -51,6 +51,14 @@
             <version>2.2</version>
             <type>jar</type>
         </dependency>
+        
+        <dependency>
+            <groupId>net.bootsfaces</groupId>
+            <artifactId>bootsfaces</artifactId>
+            <version>0.8.0</version>
+            <scope>compile</scope>
+        </dependency>
+        
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -128,10 +136,13 @@
                         </goals>
                         <configuration>
                             <wsdlFiles>
-                                <wsdlFile>localhost_8080/OlspsAccessControlApi-3.2.1/AccessControllerWebService/AccessControllerWebService.wsdl</wsdlFile>
+                                <wsdlFile>localhost_8443/OlspsAccessControlApi-3.4.0/AccessControllerWebService/AccessControllerWebService.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName></packageName>
-                            <wsdlLocation>http://localhost:8080/OlspsAccessControlApi-3.2.1/AccessControllerWebService/AccessControllerWebService?wsdl</wsdlLocation>
+                            <vmArgs>
+                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+                            </vmArgs>
+                            <wsdlLocation>https://localhost:8443/OlspsAccessControlApi-3.4.0/AccessControllerWebService/AccessControllerWebService?wsdl</wsdlLocation>
                             <staleFile>${project.build.directory}/jaxws/stale/AccessControllerWebService.stale</staleFile>
                         </configuration>
                         <id>wsimport-generate-AccessControllerWebService</id>

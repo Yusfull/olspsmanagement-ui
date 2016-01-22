@@ -5,362 +5,485 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
 
-    <f:view id="viewid" encoding="UTF-8" contentType="text/html">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-        <h:head>
 
-            <f:facet name="first">
-                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-                <title>OLSPS-UI</title>
-            </f:facet>
-        </h:head>
-        <h:body>
-            <h:form id="form1">
-                <p:growl id="growl1" sticky="true" showDetail="true" life="3000" />
-                <p:dialog id="div1"  header="Add User" widgetVar="addWidget">
-                    <h:panelGrid columns="2" cellpadding="5" border="0">
-                        <p:outputLabel id="firstname" for="firstName" value="First name:"/>
-                        <p:inputText id="firstName" required="true" label="firstname"  placeholder="first name" value="#{olspsController.user.firstName}"/> 
-                        <p:outputLabel id="surname" for="lastName" value="Last name:"/>
-                        <p:inputText id="lastName"  required="true" label="surname"  placeholder="last name" value="#{olspsController.user.lastName}"/>
-                        <p:outputLabel id="usernamez" for="userName" value="User name:"/>
-                        <p:inputText id="userName" required="true" label="username"  placeholder="user name" value="#{olspsController.user.userName}"/>
-                        <p:outputLabel id="passwordz" for="passName" value="Password:"/>
-                        <p:password id="passName" required="true" label="password"  placeholder="Password" value="#{olspsController.user.passwordCypher}"/>
-                        <!--<p:outputLabel id="groupname" for="groupName" value="Group name:"/-->
 
-                        <p:commandButton id="addo" value="Add"  update="growl1" 
-                                         action="#{olspsController.addUser()}"
-                                         oncomplete="updateUserTableContents()"></p:commandButton>
-                    </h:panelGrid>
-                </p:dialog>
-                <p:remoteCommand name="updateUserTableContents"
-                                 update="mainForm:accessViewTab:userTable" />
-            </h:form>
+    <h:head>
+        <f:facet name="first">
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <title>OLSPS-UI</title>
+        </f:facet>
+    </h:head>
+    <h:body>
 
-            <h:form id="form">
-                <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
-                <p:dialog header="Login" widgetVar="loginWidget">
-                    <h:panelGrid columns="2" cellpadding="5" border="0">
-                        <p:outputLabel id="username" for="name" value="Username"/>
-                        <p:inputText id="name" label="username" required="true"/>
-                        <p:outputLabel id="password" for="passwords" value="Password"/>
-                        <p:password id="passwords"  feedback="true" required="true"/>
+        <h:form id="formDeleteUserDialog">
+            <p:dialog id="dlg" header="User Info" widgetVar="wvDeleteUserDialog" resizable="false" style="width: 350px" dynamic="true">
+                <p:outputPanel id="userDetail" style="text-align:center;">
 
-                        <p:commandButton id="btn" update="growl" value="Submit">
-                            <f:ajax execute="name" render="user_session"/>
-                        </p:commandButton>
+                    <p:panelGrid  columns="2"  columnClasses="label,value">
 
-                    </h:panelGrid>
-                </p:dialog>
-            </h:form>
-            <h:form id="addgroup1">
-                <p:growl id="addgroup1growl" sticky="true" showDetail="true" life="3000" />
-                */ add a group dialog /*
-                <p:dialog header="Add Group" widgetVar="addgroup1Widget">
-                    <h:panelGrid columns="2" cellpadding="5" border="0">
-                        <p:outputLabel id="username" for="name" value="Group Name:"/>
-                        <p:inputText id="name" label="username"  value="#{olspsController.group.name}" required="true"/>
-                        <p:commandButton id="btn1" update="addgroup1growl" value="Submit" action="#{olspsController.addGroup()}">
-                            <f:ajax execute="name" render="user_session"/>
-                        </p:commandButton>
-                    </h:panelGrid>
-                </p:dialog>
-            </h:form>
+                        <h:outputText value="Id:" />
+                        <h:outputText value="#{olspsController.userToDelete.id}" />
 
-            <h:form id="addrole">
-                <p:growl id="addrolegrowl" sticky="true" showDetail="true" life="3000" />
+                        <h:outputText value="First Name:" />
+                        <h:outputText value="#{olspsController.userToDelete.firstName}" />
 
-                <p:dialog header="Add Role" widgetVar="addroleWidget">
-                    <h:panelGrid columns="2" cellpadding="5" border="0">
-                        <p:outputLabel id="roleName" for="name1" value="Role Name:"/>
-                        <p:inputText id="name1" label="rolename"  value="#{olspsController.role.name}" required="true"/>
-                        <p:commandButton id="btn11" update="addrolegrowl" value="Submit" action="#{olspsController.addRole()}">
-                            <f:ajax execute="name" render="user_session"/>
-                        </p:commandButton>
-                    </h:panelGrid>
-                </p:dialog>
-            </h:form>
+                        <h:outputText value="Last Name:" />
+                        <h:outputText value="#{olspsController.userToDelete.lastName}"/>
 
-            <h:form id="addUserToGroup">
-                <p:growl id="addUserToGroupgrowl" sticky="false" showDetail="true" life="3000" />
-                <p:dialog header="add User To a Group" widgetVar="addUserToGroupWidget">
-                    <h:panelGrid columns="2" cellpadding="5" border="0">
-                        <p:outputLabel id="username11" value="Username"/>
-                        <p:selectOneMenu id="usergroupX" value="#{olspsController.selectedUser}" height="100"  panelStyle="height:170px"  converter="userConverter" var="temp" style="width:180px">
-                            <f:selectItems value="#{olspsController.userList}" var="user" itemLabel="#{user.userName}" itemValue="#{user.userName}" />
-                        </p:selectOneMenu>
+                        <h:outputText value="User name:" />
+                        <h:outputText value="#{olspsController.userToDelete.userName}" />
 
-                        <p:outputLabel id="groupname" value="Group Name"/>
-                        <p:selectOneMenu id="usergroupsidX" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px">
-                            <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" itemValue="#{data.name}"/>
-                        </p:selectOneMenu>
+                        <h:commandButton id="whyid" value="Delete" action="#{olspsController.deleteUser}" />
+                    </p:panelGrid>
+                </p:outputPanel>            
+            </p:dialog>
+        </h:form> 
 
-                        <p:commandButton id="groupbutton" update="addUserToGroupgrowl" value="Submit" action="#{olspsController.addUserToGroup()}">
-                            <f:ajax execute="name" render="user_session"/>
-                        </p:commandButton>
-                    </h:panelGrid>
-                </p:dialog>
-            </h:form>
-            
-            
-            <h:form id="grouproles">
-                <p:growl id="grouprolesgrowl" life="1000" autoUpdate="true"/>
-                <p:dialog id="poupid" header="Add roles to groups" widgetVar="grouprolesWidget" height="90" width="290">
-                    <h:panelGrid id="gridid" columns="2" cellpadding="5" border="0">
-                        <p:outputLabel id="groupz" value="Groups:"/>
-                        <p:selectOneMenu id="groups" value="#{olspsController.selectedGroup}" height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px">
-                            <f:selectItems id="itmid" value="#{olspsController.groupsList}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups.name}" />
-                        </p:selectOneMenu>
+        <h:form id="frmDeletegroup">
+            <p:dialog id="dlgDeletegroup" header="Group Info" widgetVar="vwDeleteGroup" resizable="true" style="width: 350px" dynamic="true">
+                <p:outputPanel id="panelgroupDetail" style="text-align:center;">
+                    <p:panelGrid  columns="2"  columnClasses="label,value">
 
-                        <p:outputLabel id="roles" value="Roles"/>
-                        <p:selectOneMenu id="rolesid" value="#{olspsController.selectedRole}" converter="roleConverter" style="width: 200px">
-                            <f:selectItems id="itm1id" value="#{olspsController.rolesList}" var="role" itemLabel="#{role.name}" itemValue="#{role.name}"/>
-                        </p:selectOneMenu>
+                        <h:outputText value="Id:" />
+                        <h:outputText value="#{olspsController.groupToDelete.id}" />
 
-                        <p:commandButton id="rolebutton" update="grouprolesgrowl" value="Submit" action="#{olspsController.assignRoletoGroups()}">
-                            <f:ajax execute="name" render="user_session"/>
-                        </p:commandButton>
-                    </h:panelGrid>
+                        <h:outputText value="Name:" />
+                        <h:outputText value="#{olspsController.groupToDelete.name}" />
+                        
+                        <h:commandButton id="whyid" value="Delete" action="#{olspsController.deleteGroup}" />
+                    </p:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+        </h:form>
 
-                </p:dialog>
+        <h:form id="form1">
+            <p:growl id="growl1" sticky="true" showDetail="true" life="3000" />
+            <p:dialog id="div1"  header="Add User" widgetVar="addWidget">
+                <h:panelGrid columns="2" cellpadding="5" border="0">
+                    <p:outputLabel id="firstname" for="firstName" value="First name:"/>
+                    <p:inputText id="firstName" required="true" label="firstname"  placeholder="first name" value="#{olspsController.user.firstName}"/> 
+                    <p:outputLabel id="surname" for="lastName" value="Last name:"/>
+                    <p:inputText id="lastName"  required="true" label="surname"  placeholder="last name" value="#{olspsController.user.lastName}"/>
+                    <p:outputLabel id="usernamez" for="userName" value="User name:"/>
+                    <p:inputText id="userName" required="true" label="username"  placeholder="user name" value="#{olspsController.user.userName}"/>
+                    <p:outputLabel id="passwordz" for="passName" value="Password:"/>
+                    <p:password id="passName" required="true" label="password"  placeholder="Password" value="#{olspsController.user.passwordCypher}"/>
+                    <!--<p:outputLabel id="groupname" for="groupName" value="Group name:"/-->
 
-            </h:form>
-            <h:form id="deletefrmgrpid">
-                <p:growl id="deleteGrpGrowl" life="1000" autoUpdate="true"/>
-                <p:dialog id="deleteGroupid" header="Group Summary" widgetVar="deletegroupWidget" height="90" width="290">
-                    <p:selectOneMenu id="usergroupsid" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px">
+                    <p:commandButton id="addo" value="Add"  update="growl1" 
+                                     action="#{olspsController.addUser()}"
+                                     oncomplete="updateUserTableContents()"></p:commandButton>
+                </h:panelGrid>
+            </p:dialog>
+            <p:remoteCommand name="updateUserTableContents"
+                             update="mainForm:accessViewTab:userTable" />
+        </h:form>
+
+
+
+        <h:form id="form">
+            <p:growl id="growl" sticky="true" showDetail="true" life="3000" />
+            <p:dialog header="Login" widgetVar="loginWidget">
+                <h:panelGrid columns="2" cellpadding="5" border="0">
+                    <p:outputLabel id="username" for="name" value="Username"/>
+                    <p:inputText id="name" label="username" required="true"/>
+                    <p:outputLabel id="password" for="passwords" value="Password"/>
+                    <p:password id="passwords"  feedback="true" required="true"/>
+
+                    <p:commandButton id="btn" update="growl" value="Submit">
+                        <f:ajax execute="name" render="user_session"/>
+                    </p:commandButton>
+
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+        <h:form id="addgroup1">
+            <p:growl id="addgroup1growl" sticky="true" showDetail="true" life="3000" />
+            <p:dialog header="Add Group" widgetVar="addgroup1Widget">
+                <h:panelGrid columns="2" cellpadding="5" border="0">
+                    <p:outputLabel id="username" for="name" value="Group Name:"/>
+                    <p:inputText id="name" label="username"  value="#{olspsController.group.name}" required="true"/>
+                    <p:commandButton id="btn1" update="addgroup1growl" value="Submit" action="#{olspsController.addGroup()}">
+                        <f:ajax execute="name" render="user_session"/>
+                    </p:commandButton>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="addrole">
+            <p:growl id="addrolegrowl" sticky="true" showDetail="true" life="3000" />
+
+            <p:dialog header="Add Role" widgetVar="addroleWidget">
+                <h:panelGrid columns="2" cellpadding="5" border="0">
+                    <p:outputLabel id="roleName" for="name1" value="Role Name:"/>
+                    <p:inputText id="name1" label="rolename"  value="#{olspsController.role.name}" required="true"/>
+                    <p:commandButton id="btn11" update="addrolegrowl" value="Submit" action="#{olspsController.addRole()}">
+                        <f:ajax execute="name" render="user_session"/>
+                    </p:commandButton>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="addUserToGroup">
+            <p:growl id="addUserToGroupgrowl" sticky="false" showDetail="true" life="3000" />
+            <p:dialog header="add User To a Group" widgetVar="addUserToGroupWidget">
+                <h:panelGrid columns="2" cellpadding="5" border="0">
+                    <p:outputLabel id="username11" value="Username"/>
+                    <p:selectOneMenu id="usergroupX" value="#{olspsController.selectedUser}" height="100"  panelStyle="height:170px"  converter="userConverter" var="temp" style="width:180px">
+                        <f:selectItems value="#{olspsController.userList}" var="user" itemLabel="#{user.userName}" itemValue="#{user.userName}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel id="groupname" value="Group Name"/>
+                    <p:selectOneMenu id="usergroupsidX" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px">
                         <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" itemValue="#{data.name}"/>
                     </p:selectOneMenu>
-                    <p:separator/>
-                    <p:commandButton id="pg" value="submit" actionListener="#{olspsController.deleteGroup}"/>
-                </p:dialog>
 
-            </h:form>
-            <h:form id="userSummaryId">
-                <p:growl id="userSummaryGrowl" life="1000" autoUpdate="true"/>
-                <p:dialog id="summaryDialog" header="User Summary" widgetVar="summaryWidget" resizable="false" height="450px">
-                    <p:layout style="min-width:1035px;height:350px;" >
-                        <p:layoutUnit position="west"  resizable="false" size="490"  style="height: 200px"   header="User Groups">
-                            <h:panelGrid id="devide" columns="1" >
-                                <p:selectOneMenu id="usergroups" value="#{olspsController.group.name}" height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px"
-                                                 filter="true" filterMatchMode="startsWith">
-                                    <f:selectItems value="#{olspsController.groupsList}" var="group" itemLabel="#{group.name}" itemValue="#{group.name}" />
-                                </p:selectOneMenu>
-                                <p:separator/>
-
-                                <p:pickList converter="userPicklistConverter" value="#{olspsController.userModel}" var="valueVar" itemValue="#{valueVar}" itemLabel="#{valueVar}"  >
-                                    <f:facet name="sourceCaption">Available Variables</f:facet>
-                                    <f:facet name="targetCaption">Associated Variables</f:facet>
-                                </p:pickList>
-                            </h:panelGrid>
-                        </p:layoutUnit>
-
-                        <p:layoutUnit position="center" resizable="false" size="345" style="height: 200px" header="Groups">
-                            <h:selectOneListbox id="members" size="5"   >
-                                <f:selectItem itemValue="525" itemLabel="Support"/>
-                                <f:selectItem itemValue="535" itemLabel="Analytics" />
-                                <f:selectItem itemValue="535" itemLabel="Finance" />
-                                <f:selectItem itemValue="535" itemLabel="Admin" />
-                            </h:selectOneListbox>
-                        </p:layoutUnit>
-
-                        <p:layoutUnit position="east" resizable="false" size="345" style="height: 200px" header="Activities">
-                            <h:selectOneListbox id="activities" size="5"  >
-                                <f:selectItem itemValue="535" itemLabel="Finance" />
-                                <f:selectItem itemValue="535" itemLabel="Admin" />
-                                <f:selectItem itemValue="535" itemLabel="Projects" />
-                            </h:selectOneListbox>
-                        </p:layoutUnit>
-                    </p:layout>
-                    <p:separator style="width:1030px;height:10px" />
-                    <p:commandButton id="summaryDialogid" value="Add User" onclick="PF('addWidget').show();"/>
-                    <p:commandButton id="summaryDialog1id" value="Add User to groups" onclick="PF('addUserToGroupWidget').show();"/>
-                </p:dialog>
-            </h:form>
-
-            <h:form id="mainForm">
-                <h:body>
-                    <!--meta http-equiv="refresh" content="120" /-->
-                    <p:growl id="tableGrowl" sticky="true" showDetail="true" life="3000" />
-                    <p:layout fullPage="true">
-
-                        <p:layoutUnit position="north" size="100" resizable="false" maxSize="60" closable="true" collapsible="true" >
-
-                            <p:cache region="testcache" key="toolbar">
-                                <p:toolbar >
-                                    <p:toolbarGroup align="left">
-                                        <p:commandButton type="button" value="Home" icon="ui-icon-home" />
-
-                                        <p:commandButton type="button" value="Open" icon="ui-icon-folder-open"/>
-
-                                        <p:separator />
-
-                                        <p:commandButton type="button" title="Save" icon="ui-icon-disk"/>
-                                        <p:commandButton type="button" title="Delete" icon="ui-icon-trash"/>
-                                        <p:commandButton type="button" title="Print" icon="ui-icon-print"/>
-                                    </p:toolbarGroup>
-
-                                    <p:toolbarGroup align="right">
-                                        <p:inputText style="margin-right:10px" placeholder="Search"/>
-                                        <p:commandButton type="button" value="Login" onclick="PF('loginWidget').show();" icon="ui-icon-extlink" />
-                                        <p:commandButton type="button" value="Logout" icon="ui-icon-close"/>
-                                    </p:toolbarGroup>
-                                </p:toolbar>
-
-                            </p:cache>
-
-                        </p:layoutUnit>
-
-                        <p:layoutUnit position="south" size="90" closable="true" collapsible="true" resizable="true">
-                            Footer
-                        </p:layoutUnit>
-
-                        <p:layoutUnit position="west" size="195" header="Admin UI" collapsible="true" resizable="true">
-                            <p:menuButton value="Users menu" >
-                                <p:menuitem value="Add user" onclick="PF('summaryWidget').show();" disabled="false"></p:menuitem>
-                                <p:menuitem value="Add user group" onclick="PF('addUserToGroupWidget').show();" disabled="false"></p:menuitem>
-                                <p:menuitem value="Remove"  disabled="false"></p:menuitem>
-                                <p:menuitem value="View All" onclick="PF('tableWidget')" actionListener="#{olspsController.findAllUsers()}" disabled="true"></p:menuitem>
-                                <p:menuitem value="Search"  disabled="true" ></p:menuitem>
-                            </p:menuButton>
-                            <p:separator></p:separator>
-
-                            <p:menuButton value="Group menu">
-                                <p:menuitem value="Add Group" onclick="PF('addgroup1Widget').show();" disabled="false"></p:menuitem>
-                                <p:menuitem value="Remove group" onclick="PF('deletegroupWidget').show();" disabled="false"></p:menuitem>
-                                <p:menuitem value="Search groups" url="http://www.primefaces.org/themes.html" disabled="true" ></p:menuitem>
-
-                            </p:menuButton>
-                            <p:separator></p:separator>
-                            <p:menuButton id="role" value="Roles menu    ">
-                                <p:menuitem id="addRole" value="Add" onclick="PF('addroleWidget').show()" disabled="false"/>
-                                <p:menuitem id="deleteRole" value="Delete"/>
-                                <p:menuitem id="editRole" value="edit"/>
-                                <p:menuitem id="rolestogroups" value="Assign Groups" onclick="PF('grouprolesWidget').show()" disabled="false" />
-                            </p:menuButton>
-
-                        </p:layoutUnit>
-                        <p:layoutUnit position="east" size="175" header="Session" collapsible="true" resizable="true">
-                            <h3><h:outputText id="user_session" value="#{user.userName}"/></h3>
-                        </p:layoutUnit>
-
-                        <p:layoutUnit position="center">
-
-                            <p:tabView id="accessViewTab" dynamic="true" cache="false" >
-                                <p:tab title="User View">
-                                    <p:dataTable id="userTable" 
-                                                 var="userVar" 
-                                                 value="#{olspsController.userList}" 
-                                                 editable="true" 
-                                                 editMode="row" selectionMode="single"
-                                                 emptyMessage="No users found" rowIndexVar="rowIndex"
-                                                 rowKey="#{userVar.id}" selection="#{olspsController.selectedUser}"
-                                                 filteredValue="#{olspsController.filteredUsers}"
-                                                 style="margin-bottom:20px">
-
-                                        <f:facet name="header">
-                                            User Details
-                                        </f:facet>
-
-                                        <p:ajax event="rowEdit" listener="#{olspsController.onRowEdit}" update=":mainForm:tableGrowl" />
-                                        <p:ajax event="rowEditCancel" listener="#{olspsController.onRowCancel}" update=":mainForm:tableGrowl" />
-
-                                        <p:column filterBy="#{userVar.firstName}" headerText="First name"  resizable="true">
-
-                                            <p:cellEditor>
-                                                <f:facet name="output"><h:outputText value="#{userVar.firstName}"/></f:facet>
-                                                <f:facet name="input"><p:inputText value="#{userVar.firstName}"  style="width:96%"/></f:facet>
-                                            </p:cellEditor>
-                                        </p:column>
-
-                                        <p:column filterBy="#{userVar.lastName}" headerText="Last name" resizable="true" >
-
-                                            <p:cellEditor>
-                                                <f:facet name="output"><h:outputText value="#{userVar.lastName}"/></f:facet>
-                                                <f:facet name="input"><p:inputText value="#{userVar.lastName}"  style="width:96%"/></f:facet>
-                                            </p:cellEditor>
-                                        </p:column>
-
-                                        <p:column filterBy="#{userVar.userName}" headerText="Username" resizable="true">
-
-                                            <p:cellEditor>
-                                                <f:facet name="output"><h:outputText value="#{userVar.userName}" /></f:facet>
-                                                <f:facet name="input"><p:inputText value="#{userVar.userName}"  style="width:96%"/></f:facet>
-                                            </p:cellEditor>
-                                        </p:column>
-                                        <p:column headerText="View" style="width:32px">
-                                            <p:commandButton icon="ui-icon-search" title="View Record Summary" onclick="PF('summaryWidget').show();">
-
-                                            </p:commandButton>
-                                        </p:column>
-                                        <p:column style="width:32px">
-                                            <p:rowEditor   />
-                                        </p:column>
+                    <p:commandButton id="groupbutton" update="addUserToGroupgrowl" value="Submit" action="#{olspsController.addUserToGroup()}">
+                        <f:ajax execute="name" render="user_session"/>
+                    </p:commandButton>
+                </h:panelGrid>
+            </p:dialog>
+        </h:form>
 
 
-                                    </p:dataTable>
-                                </p:tab>
+        <h:form id="grouproles">
+            <p:growl id="grouprolesgrowl" life="1000" autoUpdate="true"/>
+            <p:dialog id="poupid" header="Add roles to groups" widgetVar="grouprolesWidget" height="90" width="290">
+                <h:panelGrid id="gridid" columns="2" cellpadding="5" border="0">
+                    <p:outputLabel id="groupz" value="Groups:"/>
+                    <p:selectOneMenu id="groups" value="#{olspsController.selectedGroup}" height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px">
+                        <f:selectItems id="itmid" value="#{olspsController.groupsList}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups.name}" />
+                    </p:selectOneMenu>
 
-                                <p:tab title="User Groups">
+                    <p:outputLabel id="roles" value="Roles"/>
+                    <p:selectOneMenu id="rolesid" value="#{olspsController.selectedRole}" converter="roleConverter" style="width: 200px">
+                        <f:selectItems id="itm1id" value="#{olspsController.rolesList}" var="role" itemLabel="#{role.name}" itemValue="#{role.name}"/>
+                    </p:selectOneMenu>
 
-                                    <p:layout  style="min-width:300px;min-height:600px;">
-                                        <p:layoutUnit position="west" resizable="false"  size="500"  header="Groups">
-                                            <p:panel>
-                                                <p:selectOneMenu id="usergroupsid" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px" >
-                                                    <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" 
-                                                                   itemValue="#{data.name}"/>
-                                                </p:selectOneMenu>
-                                            </p:panel>
-                                            <p:separator/>
-                                            <p:panel>
-                                                <f:facet name="sourceCaption">Available Variables</f:facet>
-                                                <h:panelGrid id="con" columns="3" cellpadding="10"   >
+                    <p:commandButton id="rolebutton" update="grouprolesgrowl" value="Submit" action="#{olspsController.assignRoletoGroups()}">
+                        <f:ajax execute="name" render="user_session"/>
+                    </p:commandButton>
+                </h:panelGrid>
 
-                                                    <p:selectOneListbox id="activitiesZZ" value="#{olspsController.selectedUser}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
-                                                        <f:selectItems id="itm" value="#{olspsController.notinGroupList}" var="ingroupUser" 
-                                                                       itemValue="#{ingroupUser.userName}" itemLabel="#{ingroupUser.userName}"/>
-                                                    </p:selectOneListbox>
+            </p:dialog>
 
-                                                    <h:panelGrid id="trying" columns="1" cellpadding="5"> 
-                                                        <h:commandButton id="sa" value="filter" actionListener="#{olspsController.editUserGroups()}"/>
-                                                        <h:commandButton id="sad" value="add" actionListener="#{olspsController.adToGroup()}">
-                                                            <f:ajax id="ajaxId" render="activitiesZZ"/>
-                                                        </h:commandButton>                    
-                                                    </h:panelGrid>
+        </h:form>
+        <h:form id="deletefrmgrpid">
+            <p:growl id="deleteGrpGrowl" life="1000" autoUpdate="true"/>
+            <p:dialog id="deleteGroupid" header="Group Summary" widgetVar="deletegroupWidget" height="90" width="290">
+                <p:selectOneMenu id="usergroupsid" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px">
+                    <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" itemValue="#{data.name}"/>
+                </p:selectOneMenu>
+                <p:separator/>
+                <p:commandButton id="pg" value="submit" actionListener="#{olspsController.deleteGroup}"/>
+            </p:dialog>
 
-                                                    <p:selectOneListbox id="activitiesZ" value="#{olspsController.selectedUser}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
-                                                        <f:selectItems id="values" value="#{olspsController.inList}" var="valuesVar" 
-                                                                       itemValue="#{valuesVar.firstName}" 
-                                                                       itemLabel="#{valuesVar.firstName}" />
+        </h:form>
 
-                                                    </p:selectOneListbox>
-                                                </h:panelGrid>
-                                            </p:panel>
-                                        </p:layoutUnit>
 
-                                        <p:layoutUnit position="center" resizable="false" size="345" header="Activities">
-                                            <h:selectOneListbox id="activities" size="2"  >
-                                                <f:selectItem itemValue="535" itemLabel="Finance" />
-                                                <f:selectItem itemValue="535" itemLabel="Admin" />
-                                                <f:selectItem itemValue="535" itemLabel="Projects" />
-                                            </h:selectOneListbox>
-                                        </p:layoutUnit>
-                                    </p:layout>
+        <h:form>
+            <p:growl id="deleteUserGrowl" life="1000" autoUpdate="true"/>
+            <p:dialog id="deleUser" header="Delete User" widgetVar="deleteUserWidget" height="90" width="290">
+                <p:selectOneMenu id="userdelid" value="#{olspsController.userToDelete}" converter="userConverter" style="width: 200px">
+                    <f:selectItems value="#{olspsController.userList}" var="user" itemLabel="#{user.userName}" itemValue="#{user.userName}"/>
+                </p:selectOneMenu>
+                <p:separator/>
+                <p:commandButton id="btnDelete" value="Delete" actionListener="#{olspsController.deleteUser()}"/>
 
-                                </p:tab>
-                                <p:tab title="Group View">
+            </p:dialog>
+        </h:form>
 
-                                </p:tab>
-                            </p:tabView>
-                        </p:layoutUnit>
-                    </p:layout>
-                </h:body>
-            </h:form>
-            <br />
-            <h:link outcome="welcomePrimefaces" value="Primefaces welcome page" />
-        </h:body>
-    </f:view>
+        <h:form id="userSummaryId">
+            <p:growl id="userSummaryGrowl" life="1000" autoUpdate="true"/>
+            <p:dialog id="summaryDialog" header="User Summary" widgetVar="summaryWidget" resizable="false" height="450px">
+                <p:layout style="min-width:1035px;height:350px;" >
+                    <p:layoutUnit position="west"  resizable="false" size="490"  style="height: 200px"   header="User Groups">
+                        <p:panel>
+                            <p:selectOneMenu id="usergroups" value="#{olspsController.selectedGroup}" 
+                                             height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px">
+
+                                <f:selectItems value="#{olspsController.groupsList}" var="group" itemLabel="#{group.name}" itemValue="#{group.name}" />
+                                <f:ajax listener="#{olspsController.editUserGroups()}"/>
+                            </p:selectOneMenu>
+                            <h:commandButton id="filterdata" value="Submit" actionListener="#{olspsController.editUserGroups()}"/>
+                        </p:panel>
+                        <p:separator/>
+                        <p:panel>
+                            <h:panelGrid id="devide" columns="3" cellspacing="5" >
+
+                                <p:selectOneListbox id="usergroupsList" value="#{olspsController.user}" style="width: 140px" scrollHeight="80" converter="userConverter" >
+                                    <f:selectItems id="valuesInid" value="#{olspsController.inList}" var="valueVar" 
+                                                   itemValue="#{valueVar.firstName}" 
+                                                   itemLabel="#{valueVar.firstName}" />
+
+                                </p:selectOneListbox>
+                                <p:selectOneListbox id="grouprolesList" value="#{olspsController.role}" style="width: 140px" scrollHeight="80" converter="userConverter" >
+                                    <f:selectItems id="valuesNotid" value="#{olspsController.rolesList}" var="valueVar2"
+                                                   itemValue="#{valueVar2.name}"
+                                                   itemLabel="#{valueVar2.name}"/>
+                                </p:selectOneListbox>
+
+                                <p:selectOneListbox id="avalablerolesList" style="width: 140px">
+
+                                </p:selectOneListbox>
+                            </h:panelGrid>    
+                        </p:panel>
+                    </p:layoutUnit>
+
+                    <p:layoutUnit position="center" resizable="false" size="345" style="height: 200px" header="Groups">
+                        <h:selectOneListbox id="members" size="5"   >
+                            <f:selectItem itemValue="525" itemLabel="Support"/>
+                            <f:selectItem itemValue="535" itemLabel="Analytics" />
+                            <f:selectItem itemValue="535" itemLabel="Finance" />
+                            <f:selectItem itemValue="535" itemLabel="Admin" />
+                        </h:selectOneListbox>
+                    </p:layoutUnit>
+
+                    <p:layoutUnit position="east" resizable="false" size="345" style="height: 200px" header="Activities">
+                        <h:selectOneListbox id="activities" size="5"  >
+                            <f:selectItem itemValue="535" itemLabel="Finance" />
+                            <f:selectItem itemValue="535" itemLabel="Admin" />
+                            <f:selectItem itemValue="535" itemLabel="Projects" />
+                        </h:selectOneListbox>
+                    </p:layoutUnit>
+                </p:layout>
+                <p:separator style="width:1030px;height:10px" />
+                <p:commandButton id="summaryDialogid" value="Add User" onclick="PF('addWidget').show();"/>
+                <p:commandButton id="summaryDialog1id" value="Add User to groups" onclick="PF('addUserToGroupWidget').show();"/>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="groupViewFormId">
+            <p:dialog id="groupDialogId" widgetVar="groupViewWidget" style="width: 400px; height: 400px" >
+                <p:dataTable id="groupTableId" var="groupVar" 
+                             value="#{olspsController.groupsList}" 
+                             editable="true" 
+                             editMode="row" selectionMode="single"
+                             emptyMessage="No Groups found" rowIndexVar="rowIndex"
+                             rowKey="#{groupVar.id}" selection="#{olspsController.selectedGroup}"
+                             filteredValue="#{olspsController.filterGroups}"
+                             scrollable="true" scrollHeight="350" style="width: 500px; height: 300px" >
+
+                    <f:facet id="facetId" name="header">
+                        Group Details
+                    </f:facet>
+
+                    <p:column id="grpidId" filterBy="#{groupVar.id}" headerText="Group ID" footerText="Group ID"  resizable="true">
+                        <p:cellEditor >
+                            <f:facet name="output"><h:outputText value="#{groupVar.id}"/></f:facet>
+                            <f:facet name="input"><p:inputText value="#{groupVar.id}"  style="width:96%"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column filterBy="#{groupVar.name}" headerText="Group Name"  footerText="Group Name" resizable="true">
+
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{groupVar.name}"/></f:facet>
+                            <f:facet name="input"><p:inputText value="#{groupVar.name}"  style="width:96%"/></f:facet>
+                        </p:cellEditor>
+                    </p:column>
+                    <p:column headerText="View" footerText="View" style="width:32px">
+                        <p:commandButton icon="ui-icon-trash" title="Delete" actionListener="#{olspsController.deleteGroup()}"
+                                         update=":frmDeletegroup:dlgDeletegroup" 
+                                         oncomplete="vwDeleteGroup.show()">
+                            
+                        </p:commandButton> 
+                                         
+                    </p:column>
+                    <p:column style="width:32px">
+                        <p:rowEditor   />
+                    </p:column>
+                </p:dataTable>                 
+            </p:dialog>
+        </h:form>
+
+        <h:form id="mainForm">
+
+            <!--meta http-equiv="refresh" content="120" /-->
+            <p:growl id="tableGrowl" sticky="true" showDetail="true" life="3000" />
+            <p:layout fullPage="true">
+
+                <p:layoutUnit position="north" size="100" resizable="false" maxSize="60" closable="true" collapsible="true" >
+
+
+                    <p:toolbar >
+                        <p:toolbarGroup align="left">
+                            <p:commandButton type="button" value="Home" icon="ui-icon-home" />
+
+                            <p:commandButton type="button" value="Open" icon="ui-icon-folder-open"/>
+
+                            <p:separator />
+
+                            <p:commandButton type="button" title="Save" icon="ui-icon-disk"/>
+                            <p:commandButton type="button" title="Delete" icon="ui-icon-trash"/>
+                            <p:commandButton type="button" title="Print" icon="ui-icon-print">
+
+                            </p:commandButton>
+                        </p:toolbarGroup>
+
+                        <p:toolbarGroup align="right">
+                            <p:inputText style="margin-right:10px" placeholder="Search"/>
+                            <p:commandButton type="button" value="Login" onclick="PF('loginWidget').show();" icon="ui-icon-extlink" />
+                            <p:commandButton type="button" value="Logout" icon="ui-icon-close"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+
+
+
+                </p:layoutUnit>
+
+                <p:layoutUnit position="south" size="90" closable="true" collapsible="true" resizable="true">
+                    Footer
+                </p:layoutUnit>
+
+                <p:layoutUnit position="west" size="195" header="Admin UI" collapsible="true" resizable="true">
+                    <p:menuButton value="Users menu" >
+                        <p:menuitem value="Add user" onclick="PF('summaryWidget').show();" disabled="false"></p:menuitem>
+                        <p:menuitem value="Add user group" onclick="PF('addUserToGroupWidget').show();" disabled="false"></p:menuitem>
+                        <p:menuitem value="Remove"  disabled="false"></p:menuitem>
+                        <p:menuitem value="View All" onclick="PF('tableWidget')" actionListener="#{olspsController.findAllUsers()}" disabled="true"></p:menuitem>
+                        <p:menuitem value="Search"  disabled="true" ></p:menuitem>
+                    </p:menuButton>
+                    <p:separator></p:separator>
+
+                    <p:menuButton value="Group menu">
+                        <p:menuitem value="Add Group" onclick="PF('addgroup1Widget').show();" disabled="false"></p:menuitem>
+                        <p:menuitem value="Edit Group" onclick="PF('groupViewWidget').show();" disabled="false"></p:menuitem> 
+                        <p:menuitem value="Remove group" onclick="PF('deletegroupWidget').show();" disabled="false"></p:menuitem>
+                        <p:menuitem value="Search groups" url="http://www.primefaces.org/themes.html" disabled="true" ></p:menuitem>
+
+                    </p:menuButton>
+                    <p:separator></p:separator>
+                    <p:menuButton id="role" value="Roles menu    ">
+                        <p:menuitem id="addRole" value="Add" onclick="PF('addroleWidget').show()" disabled="false"/>
+                        <p:menuitem id="deleteRole" value="Delete"/>
+                        <p:menuitem id="editRole" value="edit"/>
+                        <p:menuitem id="rolestogroups" value="Assign Groups" onclick="PF('grouprolesWidget').show()" disabled="false" />
+                    </p:menuButton>
+
+                </p:layoutUnit>
+                <p:layoutUnit position="east" size="175" header="Session" collapsible="true" resizable="true">
+                    <h3><h:outputText id="user_session" value="#{user.userName}"/></h3>
+                </p:layoutUnit>
+
+                <p:layoutUnit position="center">
+
+                    <p:tabView id="accessViewTab" dynamic="true" cache="false" >
+                        <p:tab title="User View">
+                            <p:dataTable id="userTable" 
+                                         var="userVar" 
+                                         value="#{olspsController.userList}" 
+                                         editable="true" 
+                                         editMode="row" selectionMode="single"
+                                         emptyMessage="No users found" rowIndexVar="rowIndex"
+                                         rowKey="#{userVar.id}" selection="#{olspsController.selectedUser}"
+                                         filteredValue="#{olspsController.filteredUsers}"
+                                         scrollable="true" scrollHeight="350" style="margin-bottom:20px" >
+
+                                <f:facet name="header">
+                                    User Details
+                                </f:facet>
+
+                                <p:ajax event="rowEdit" listener="#{olspsController.onRowEdit}" update=":mainForm:tableGrowl" />
+                                <p:ajax event="rowEditCancel" listener="#{olspsController.onRowCancel}" update=":mainForm:tableGrowl" />
+
+                                <p:column filterBy="#{userVar.firstName}" headerText="First name"  footerText="First name" resizable="true">
+
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{userVar.firstName}"/></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{userVar.firstName}"  style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column filterBy="#{userVar.lastName}" headerText="Last name" footerText="Last name" resizable="true" >
+
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{userVar.lastName}"/></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{userVar.lastName}"  style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+
+                                <p:column filterBy="#{userVar.userName}" headerText="Username" footerText="Username" resizable="true">
+
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{userVar.userName}" /></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{userVar.userName}"  style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+                                </p:column>
+                                <p:column headerText="View" style="width:32px">
+                                    <p:commandButton update="formDeleteUserDialog:userDetail" 
+                                                     icon="ui-icon-trash" 
+                                                     title="Delete" actionListener="#{olspsController.setSelectedUserForDelete(userVar)}"/>
+
+                                </p:column>
+                                <p:column style="width:32px">
+                                    <p:rowEditor />
+                                </p:column>
+                            </p:dataTable>
+
+
+                        </p:tab>
+
+                        <p:tab title="User Groups">
+
+                            <p:layout  style="min-width:300px;min-height:600px;">
+                                <p:layoutUnit position="west" resizable="false"  size="500"  header="Groups">
+                                    <p:panel>
+                                        <p:selectOneMenu id="usergroupsid" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px" >
+                                            <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" 
+                                                           itemValue="#{data.name}"/>
+                                        </p:selectOneMenu>
+                                    </p:panel>
+                                    <p:separator/>
+                                    <p:panel>
+                                        <f:facet name="sourceCaption">Available Variables</f:facet>
+                                        <h:panelGrid id="con" columns="3" cellpadding="10"   >
+
+                                            <p:selectOneListbox id="activitiesZZ" value="#{olspsController.selectedUser}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
+                                                <f:selectItems id="itm" value="#{olspsController.notinGroupList}" var="ingroupUser" 
+                                                               itemValue="#{ingroupUser.userName}" itemLabel="#{ingroupUser.userName}"/>
+                                            </p:selectOneListbox>
+
+                                            <h:panelGrid id="trying" columns="1" cellpadding="5"> 
+                                                <h:commandButton id="sa" value="filter" actionListener="#{olspsController.editUserGroups()}"/>
+                                                <h:commandButton id="sad" value="add" actionListener="#{olspsController.adToGroup()}">
+                                                    <f:ajax id="ajaxId" render="activitiesZZ"/>
+                                                </h:commandButton>                    
+                                            </h:panelGrid>
+
+                                            <p:selectOneListbox id="activitiesZ" value="#{olspsController.selectedUser}" scrollHeight="80" converter="userConverter" style="width: 150px"  >
+                                                <f:selectItems id="values" value="#{olspsController.inList}" var="valuesVar" 
+                                                               itemValue="#{valuesVar.firstName}" 
+                                                               itemLabel="#{valuesVar.firstName}" />
+
+                                            </p:selectOneListbox>
+                                        </h:panelGrid>
+                                    </p:panel>
+                                </p:layoutUnit>
+
+                                <p:layoutUnit position="center" resizable="false" size="345" header="Activities">
+                                    <h:selectOneListbox id="activities" size="2"  >
+                                        <f:selectItem itemValue="535" itemLabel="Finance" />
+                                        <f:selectItem itemValue="535" itemLabel="Admin" />
+                                        <f:selectItem itemValue="535" itemLabel="Projects" />
+                                    </h:selectOneListbox>
+                                </p:layoutUnit>
+                            </p:layout>
+
+                        </p:tab>
+                        <p:tab title="Group View">
+
+                        </p:tab>
+                    </p:tabView>
+                </p:layoutUnit>
+            </p:layout>
+        </h:form>
+
+
+
+
+
+    </h:body>
+
 </html>
 
 

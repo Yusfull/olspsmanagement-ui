@@ -23,6 +23,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 
 /**
  *
@@ -52,12 +53,17 @@ public class TestSample {
         System.out.println("This is a test !!");
     }
 
-    // @Test(priority = 0)
+    @Test(priority = 0)
     public void login() throws InvalidKeySpecException_Exception, NoSuchAlgorithmException_Exception, RecordNotFoundException_Exception, RecordNotUniqueException_Exception {
-        String uname = "khungani";
-        String pname = "devteam";
-        boolean valid = accessControll.isUserCredentialsValid(uname, pname);
-        Assert.assertTrue(valid);
+        String uname = "Dent";
+        String pname = "ZmVuY2h1cmNoMTIz";
+        try {
+            boolean valid = accessControll.isLdapUserCredentialsValid(uname, pname);
+             Assert.assertTrue(valid);
+             System.out.println("Valid user" + " " + valid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -138,7 +144,21 @@ public class TestSample {
         }
     }
     
-     //@Test(priority = 0)
+    
+    
+    //@Test(priority = 0)
+    public void deleteUser(){
+        
+        try {
+            String name = "123451";
+            accessControll.deleteUser(name);
+            Assert.assertNull(accessControll.findUser(name),"User not found");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //@Test(priority = 0)
     public void deleteGroup() {
         try {
             String groupToDelete = "Test Grp";
@@ -211,18 +231,48 @@ public class TestSample {
     }
 
     //@Test(priority = 0)
-    public void testfindRoles(){
-        try{
-            
-            List<Role> emRoles =  accessControll.findRoles("%");
+    public void testfindRoles() {
+        try {
+
+            List<Role> emRoles = accessControll.findRoles("%");
             for (Role emRole : emRoles) {
                 System.out.println(emRole.getId());
             }
             System.out.println("app_test.TestSample.testfindRoles()");
-        }catch(Exception exception){
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
+    //@Test(priority = 0)
+    public void getRolesForGroup(){
+        try {
+            List<Role> tryRoles = accessControll.getRolesAssignedToGroup("Dev Team");
+            for (Role tryRole : tryRoles) {
+                System.out.println("**" + tryRole.getName());    
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    //@Test
+    void testUpdateGroup() {
+        try{
+            String grouName = "ChelseaX";
+            group = accessControll.findGroup("Chelsea");
+            String real = group.getName();
+            real = grouName;
+            group.setName(grouName);
+            //accessControll.
+            
+            
+            
+        }catch(Exception exception){
+            exception.printStackTrace();
+        }
+                
+         
+    }
+
     @BeforeClass
     public static void setUpClass() throws AssertionError {
     }
