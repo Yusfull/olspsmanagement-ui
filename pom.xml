@@ -16,17 +16,12 @@
     
     <dependencies>
         <dependency>
-            <groupId>org.primefaces</groupId>
-            <artifactId>primefaces</artifactId>
-            <version>5.3</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
             <type>jar</type>
         </dependency>
+        
         <dependency>
             <groupId>com.unboundid</groupId>
             <artifactId>unboundid-ldapsdk</artifactId>
@@ -58,7 +53,12 @@
             <version>0.8.0</version>
             <scope>compile</scope>
         </dependency>
-        
+        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>5.3</version>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-api</artifactId>
@@ -136,13 +136,13 @@
                         </goals>
                         <configuration>
                             <wsdlFiles>
-                                <wsdlFile>localhost_8443/OlspsAccessControlApi-3.4.0/AccessControllerWebService/AccessControllerWebService.wsdl</wsdlFile>
+                                <wsdlFile>localhost_8443/OlspsAccessControlApi-3.7.0/AccessControllerWebService/AccessControllerWebService.wsdl</wsdlFile>
                             </wsdlFiles>
                             <packageName></packageName>
                             <vmArgs>
                                 <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
                             </vmArgs>
-                            <wsdlLocation>https://localhost:8443/OlspsAccessControlApi-3.4.0/AccessControllerWebService/AccessControllerWebService?wsdl</wsdlLocation>
+                            <wsdlLocation>https://localhost:8443/OlspsAccessControlApi-3.7.0/AccessControllerWebService/AccessControllerWebService?wsdl</wsdlLocation>
                             <staleFile>${project.build.directory}/jaxws/stale/AccessControllerWebService.stale</staleFile>
                         </configuration>
                         <id>wsimport-generate-AccessControllerWebService</id>

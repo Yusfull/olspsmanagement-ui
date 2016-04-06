@@ -1,0 +1,28 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">      
+    <h:form id="grouproles">
+        <p:growl id="grouprolesgrowl" life="1000" autoUpdate="true"/>
+        <p:dialog id="poupid" header="Add roles to groups" widgetVar="grouprolesWidget" height="90" width="290">
+            <h:panelGrid id="gridid" columns="2" cellpadding="5" border="0">
+                <p:outputLabel id="groupz" value="Groups:"/>
+                <p:selectOneMenu id="groups" value="#{olspsController.selectedGroup}" height="100"  panelStyle="height:170px"  converter="groupsConverter" var="temp" style="width:180px">
+                    <f:selectItems id="itmid" value="#{olspsController.groupsList}" var="groups" itemLabel="#{groups.name}" itemValue="#{groups.name}" />
+                </p:selectOneMenu>
+
+                <p:outputLabel id="roles" value="Roles"/>
+                <p:selectOneMenu id="rolesid" value="#{olspsController.selectedRole}" converter="roleConverter" style="width: 200px">
+                    <f:selectItems id="itm1id" value="#{olspsController.rolesList}" var="role" itemLabel="#{role.name}" itemValue="#{role.name}"/>
+                </p:selectOneMenu>
+
+                <p:commandButton id="rolebutton" update="grouprolesgrowl" value="Submit" action="#{olspsController.assignRoletoGroups()}">
+                    <f:ajax execute="name" render="user_session"/>
+                </p:commandButton>
+            </h:panelGrid>
+
+        </p:dialog>
+
+    </h:form>
+</ui:component> 

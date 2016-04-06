@@ -230,7 +230,7 @@ input[type=submit]:hover {
 .copy-right a:hover{
 	color:#fff;
 }
-/**//end-copy-right**/
+
 /*----start-responsive design-----*/
 @media only screen and (max-width:1680px) {
 	.main{

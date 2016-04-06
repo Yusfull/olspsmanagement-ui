@@ -1,0 +1,18 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+              xmlns:h="http://xmlns.jcp.org/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:form id="addgroup1">
+        <p:growl id="addgroup1growl" showDetail="true" life="3000" />
+        <p:dialog header="Add Group" widgetVar="addgroup1Widget">
+            <h:panelGrid columns="2" cellpadding="5" border="0">
+                <p:outputLabel id="username" for="name" value="Group Name:"/>
+                <p:inputText id="name" label="username"  value="#{olspsController.group.name}" required="true"/>
+                <p:commandButton id="btn1" update="addgroup1growl" value="Submit" actionListener="#{olspsController.addGroup}">
+                    <f:ajax execute="name" render="user_session"/>
+                </p:commandButton>
+            </h:panelGrid>
+        </p:dialog>
+    </h:form>
+</ui:component>

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
-    <system systemId="http://localhost:8080/OlspsAccessControlApi-3.2.1/AccessControllerWebService/AccessControllerWebService?wsdl" uri="wsdl/localhost_8080/OlspsAccessControlApi-3.2.1/AccessControllerWebService/AccessControllerWebService.wsdl"/>
-    <system systemId="https://localhost:8443/OlspsAccessControlApi-3.4.0/AccessControllerWebService/AccessControllerWebService?wsdl" uri="wsdl/localhost_8443/OlspsAccessControlApi-3.4.0/AccessControllerWebService/AccessControllerWebService.wsdl"/>
+    <system systemId="https://localhost:8443/OlspsAccessControlApi-3.7.0/AccessControllerWebService/AccessControllerWebService?wsdl" uri="wsdl/localhost_8443/OlspsAccessControlApi-3.7.0/AccessControllerWebService/AccessControllerWebService.wsdl"/>
 </catalog>

@@ -53,10 +53,10 @@ public class TestSample {
         System.out.println("This is a test !!");
     }
 
-    @Test(priority = 0)
+    //@Test(priority = 0)
     public void login() throws InvalidKeySpecException_Exception, NoSuchAlgorithmException_Exception, RecordNotFoundException_Exception, RecordNotUniqueException_Exception {
-        String uname = "Dent";
-        String pname = "ZmVuY2h1cmNoMTIz";
+        String uname = "bilbo";
+        String pname = "precious123";
         try {
             boolean valid = accessControll.isLdapUserCredentialsValid(uname, pname);
              Assert.assertTrue(valid);
@@ -69,7 +69,7 @@ public class TestSample {
     /*
      using testNG to test addUser method
      */
-    //@Test(priority = 0)
+   // @Test(priority = 0)
     void testAddUser() {
         user.setFirstName("Yusuf ");
         user.setLastName("Khunga");
@@ -143,9 +143,6 @@ public class TestSample {
             ex.printStackTrace();
         }
     }
-    
-    
-    
     //@Test(priority = 0)
     public void deleteUser(){
         
@@ -201,7 +198,6 @@ public class TestSample {
             if (user.getFirstName().equals("Cassim")) {
                 Assert.assertTrue(true);
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -215,7 +211,6 @@ public class TestSample {
             if (!groups.isEmpty()) {
                 Assert.assertTrue(true);
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -261,11 +256,7 @@ public class TestSample {
             group = accessControll.findGroup("Chelsea");
             String real = group.getName();
             real = grouName;
-            group.setName(grouName);
-            //accessControll.
-            
-            
-            
+            group.setName(grouName);   
         }catch(Exception exception){
             exception.printStackTrace();
         }

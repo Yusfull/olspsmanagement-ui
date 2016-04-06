@@ -1,0 +1,27 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+              xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+              xmlns:h="http://xmlns.jcp.org/jsf/html"
+              xmlns:p="http://primefaces.org/ui"
+              xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <h:form id="addUserToGroup">
+        <p:growl id="addUserToGroupgrowl" showDetail="true" life="3000" />
+        <p:dialog header="add User To a Group" widgetVar="addUserToGroupWidget">
+            <h:panelGrid columns="2" cellpadding="5" border="0">
+                <p:outputLabel id="username11" value="Username"/>
+                <p:selectOneMenu id="usergroupX" value="#{olspsController.selectedUser}" height="100"  panelStyle="height:170px"  converter="userConverter" var="temp" style="width:180px">
+                    <f:selectItems value="#{olspsController.userList}" var="user" itemLabel="#{user.userName}" itemValue="#{user.userName}" />
+                </p:selectOneMenu>
+
+                <p:outputLabel id="groupname" value="Group Name"/>
+                <p:selectOneMenu id="usergroupsidX" value="#{olspsController.selectedGroup}" converter="groupsConverter" style="width: 200px">
+                    <f:selectItems value="#{olspsController.groupsList}" var="data" itemLabel="#{data.name}" itemValue="#{data.name}"/>
+                </p:selectOneMenu>
+
+                <p:commandButton id="groupbutton" update="addUserToGroupgrowl" value="Submit" action="#{olspsController.addUserToGroup()}">
+                    <f:ajax execute="name" render="user_session"/>
+                </p:commandButton>
+            </h:panelGrid>
+        </p:dialog>
+    </h:form>
+</ui:component>

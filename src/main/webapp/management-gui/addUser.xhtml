@@ -1,0 +1,25 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+    <h:form id="form1">
+        <p:growl id="growl1" showDetail="true" sticky="true" />
+            <p:dialog id="div1"  header="Add User" widgetVar="addWidget" dynamic="true">
+                <h:panelGrid id="pgNewUser" columns="2" cellpadding="5" border="0">
+                    <p:outputLabel id="firstname" for="firstName" value="First name:"/>
+                    <p:inputText id="firstName" required="true" label="firstname"  placeholder="first name" value="#{olspsController.newUser.firstName}"/> 
+                    <p:outputLabel id="surname" for="lastName" value="Last name:"/>
+                    <p:inputText id="lastName"  required="true" label="surname"  placeholder="last name" value="#{olspsController.newUser.lastName}"/>
+                    <p:outputLabel id="usernamez" for="userName" value="User name:"/>
+                    <p:inputText id="userName" required="true" label="username"  placeholder="user name" value="#{olspsController.newUser.userName}"/>
+                    <p:outputLabel id="passwordz" for="passName" value="Password:"/>
+                    <p:password id="passName" label="password"  placeholder="Password" value="#{olspsController.newUser.passwordCypher}"/>
+                    <p:commandButton id="addo" value="Add"  
+                                     process="@form"
+                                     onclick="updateUserTableContents()" update="mainForm:accessViewTab:userTable"></p:commandButton>
+                </h:panelGrid>
+            </p:dialog>
+            <p:remoteCommand name="updateUserTableContents"
+                             update="mainForm:accessViewTab:userTable" actionListener="#{olspsController.addUser}" />
+        </h:form>
+</ui:component>

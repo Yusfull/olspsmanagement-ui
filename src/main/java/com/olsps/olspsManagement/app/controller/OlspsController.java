@@ -7,7 +7,11 @@ package com.olsps.olspsManagement.app.controller;
 
 import com.olsps.olspsaccesscontrolapi.AccessControllerWebService;
 import com.olsps.olspsaccesscontrolapi.AccessControllerWebService_Service;
+import com.olsps.olspsaccesscontrolapi.GeneralSecurityException_Exception;
 import com.olsps.olspsaccesscontrolapi.Group;
+import com.olsps.olspsaccesscontrolapi.InvalidKeySpecException_Exception;
+import com.olsps.olspsaccesscontrolapi.LDAPException_Exception;
+import com.olsps.olspsaccesscontrolapi.NoSuchAlgorithmException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordExistsException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotFoundException_Exception;
 import com.olsps.olspsaccesscontrolapi.RecordNotUniqueException_Exception;
@@ -21,10 +25,13 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
-import org.apache.log4j.Priority;
 import org.omnifaces.util.Ajax;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.CellEditEvent;
@@ -44,21 +51,42 @@ import org.primefaces.model.DualListModel;
 @SessionScoped
 public class OlspsController implements Serializable {
 
+    @Inject
+    UserController userController;
+    @Inject
+    RolesController rolesController;
+    @Inject
+    EntitlementController entitlementController;
+    @Inject
+    GroupController groupController;
+    private HttpSession session;
+
     private static AccessControllerWebService accessControll;
     AccessControllerWebService_Service serviceFactory;
 
     final static Logger log = Logger.getLogger(OlspsController.class.getName());
 
-    User user = new User();
-    Group group = new Group();
-    Role role = new Role();
+    /**
+     *
+     * @return
+     */
+    User user;
+    Group group;
+    Role role;
+    private String userLogin;
+    private String password;
+
     boolean editable;
+    boolean isAuthorized;
     String selectedGroupValue;
 
     private DualListModel<User> userModel;
 
     private User selectedUser;
     private User userToDelete;
+    private User newUser;
+    //Logger rootLogger = Logger.*getLogger*("");
+
     Group groupToDelete = new Group();
     private Group selectedGroup;
     private Role selectedRole;
@@ -74,19 +102,44 @@ public class OlspsController implements Serializable {
     @PostConstruct
     public void init() {
 
+        user = new User();
         findAllUsers();
         userModel = new DualListModel<>(userList, notinGroupList);
-        findAllUsers();
+//        findAllUsers();
         findRoles();
         findAllGroups();
-
     }
 
     //default constructor
     public OlspsController() {
         serviceFactory = new AccessControllerWebService_Service();
         accessControll = serviceFactory.getAccessControllerWebServicePort();
-        //log.log(Priority.DEBUG, "Constructor logging info:");
+        this.editable = true;
+    }
+
+    public String getUserLogin() {
+        return userLogin;
+    }
+
+    public void setUserLogin(String userLogin) {
+        this.userLogin = userLogin;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public User getNewUser() {
+        //newUser = new User();
+        return newUser;
+    }
+
+    public void setNewUser(User newUser) {
+        this.newUser = newUser;
     }
 
     public boolean isEditable() {
@@ -241,32 +294,81 @@ public class OlspsController implements Serializable {
         this.inList = inList;
     }
 
-    public void login(String uname, String pname) {
+    public boolean isIsAuthorized() {
+        return isAuthorized;
+    }
+
+    public void setIsAuthorized(boolean isAuthorized) {
+        this.isAuthorized = isAuthorized;
+    }
+
+    public void addSlectedUser() {
+        selectedUser = new User();
+    }
+
+    public void logon(ActionEvent event) {
         FacesContext context = FacesContext.getCurrentInstance();
-        log.log(Priority.DEBUG, "Constructor logging info:");
+        RequestContext requestContextcontext = RequestContext.getCurrentInstance();
+        FacesMessage message = null;
+
+        boolean val = false;
         try {
-            boolean validate = accessControll.isUserCredentialsValid(uname, pname);
-            if (validate) {
-                user = accessControll.findUser(uname);
-                String name = user.getFirstName();
-                context.addMessage(null, new FacesMessage("Welcome: ", name));
-            } else {
-                context.addMessage(null, new FacesMessage("Opps! username and password do not match "));
+            if (userLogin != null && !userLogin.isEmpty() && password != null && !password.isEmpty()) {
+                val = accessControll.isUserCredentialsValid(userLogin, password);
+                if (val) {      
+                    isAuthorized = true;
+                    editable = false;
+                    session = (HttpSession) context.getExternalContext().getSession(false);
+                    message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Welcome", user.getFirstName());
+                    //context.addMessage(null, new FacesMessage("Welcome:" + " " + user.getFirstName()));
+                } else {
+                    isAuthorized = false;
+                    message = new FacesMessage(FacesMessage.SEVERITY_WARN, "Loggin Error", "Invalid credentials");
+                }
+                FacesContext.getCurrentInstance().addMessage(null, message);
+                requestContextcontext.addCallbackParam("isAuthorized", isAuthorized);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        } catch (GeneralSecurityException_Exception | LDAPException_Exception e) {
+            context.addMessage(null, new FacesMessage("Error Please login"));
+
+        } catch (RecordNotUniqueException_Exception | InvalidKeySpecException_Exception | NoSuchAlgorithmException_Exception ex) {
+            java.util.logging.Logger.getLogger(OlspsController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    public String addUser() {
+    public String logout() {
+        if (session != null) {
+            session.invalidate();
+            return "faces/index.xhtml";
+        }
+        return "";
+    }
+
+    public void addNewUser() {
+        newUser = new User();
+        Ajax.update("form1:addWidget");
+    }
+
+    public void addUser() {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
-            accessControll.addUser(user);
-            context.addMessage(null, new FacesMessage("Successful"));
+            if (isAuthorized && !session.isNew()) {
+                String plainText = newUser.getPasswordCypher();
+                String cypher = accessControll.getPasswordCypher(plainText);
+                newUser.setPasswordCypher(cypher);
+                accessControll.addUser(newUser);
+                log.debug(newUser);
+                context.addMessage(null, new FacesMessage("User Added"));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("You are not authorised to add "));
+            }
+
         } catch (RecordExistsException_Exception rec) {
-            rec.getStackTrace();
+            log.error("Error", rec);
+            // rec.getStackTrace();
+        } catch (InvalidKeySpecException_Exception | NoSuchAlgorithmException_Exception ex) {
+            java.util.logging.Logger.getLogger(OlspsController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "/faces/index.xhtml";
     }
 
     public void updateUserData() {
@@ -274,16 +376,22 @@ public class OlspsController implements Serializable {
         try {
             accessControll.updateUser(user);
         } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception ex) {
-            ex.printStackTrace();
+            log.error("Error:", ex);
         } finally {
 
         }
+    }
+
+    public void addNewGroup() {
+        group = new Group();
     }
 
     public void addGroup() {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
             accessControll.addGroup(group.getName());
+            log.debug(session);
+            log.debug(group.getName());
             context.addMessage(null, new FacesMessage("New Group added Successful !"));
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -295,9 +403,10 @@ public class OlspsController implements Serializable {
     public List<Group> findAllGroups() {
         try {
             groupsList = accessControll.findGroups("%");
+            log.debug(groupsList);
             return groupsList;
         } catch (Exception exception) {
-            exception.getStackTrace();
+            log.error("Error", exception);
         }
         return null;
     }
@@ -318,7 +427,7 @@ public class OlspsController implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
             accessControll.addUserToGroup(selectedUser.getUserName(), selectedGroup.getName());
-            context.addMessage(null, new FacesMessage(selectedUser.getUserName() + " added to " + selectedGroup.getName() + " Successful!"));
+            context.addMessage(null, new FacesMessage(selectedUser.getUserName() + " added to " + selectedGroup.getName() + " Successful11!"));
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -344,7 +453,7 @@ public class OlspsController implements Serializable {
                 /*
                  * get roles assigned to a selected group
                  */
-                
+
                 if (selectedGroup instanceof Group && selectedGroup != null) {
                     rolesList = accessControll.getRolesAssignedToGroup(selectedGroup.getName());
                 }
@@ -373,8 +482,6 @@ public class OlspsController implements Serializable {
         try {
             context.addMessage(null, new FacesMessage("Please confirm deleted!"));
             accessControll.deleteGroup(selectedGroup.getName());
-            context.addMessage(null, new FacesMessage("Group" + group.getName() + " " + "deleted!"));
-            groupsList.clear();
             findAllGroups();
             Ajax.update("deletefrmgrpid:usergroupsid");
         } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception excxception) {
@@ -383,30 +490,31 @@ public class OlspsController implements Serializable {
 
     }
 
-//    public void setSelectedGroupForDelete(Group groups) {
-//        this.groupToDelete = group;
-//        Ajax.update("frmDeletegroup:panelgroupDetail");
-//        RequestContext.getCurrentInstance().execute("PF('vwDeleteGroup').show()");
-//    }
     public List<User> findAllUsers() {
         userList = new ArrayList();
+        log.info("Searching for users");
         FacesContext context = FacesContext.getCurrentInstance();
         try {
             userList = accessControll.findUsers("%");
+            log.info(session);
             return userList;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("error", ex);
         } finally {
             context.getMessages();
         }
         return null;
     }
 
+    public void addNewRole() {
+        role = new Role();
+    }
+
     public void addRole() {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
             accessControll.addRole(role.getName());
-            context.addMessage(null, new FacesMessage("Successful"));
+            context.addMessage(null, new FacesMessage("haybo"));
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -492,17 +600,6 @@ public class OlspsController implements Serializable {
             java.util.logging.Logger.getLogger(OlspsController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
     }
-//    public void onGroupRowEdit(RowEditEvent event) {
-//        FacesContext context = FacesContext.getCurrentInstance();
-//        try {
-//            if (event.getObject() != null && event.getObject() instanceof Group) {
-//                accessControll.updateUser((Group) event.getObject());
-//                context.addMessage("Success", new FacesMessage(event.getObject() + " Edited"));
-//            }
-//        } catch (RecordNotFoundException_Exception | RecordNotUniqueException_Exception ex) {
-//            java.util.logging.Logger.getLogger(OlspsController.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-//    }
 
     public void onRowCancel(RowEditEvent event) {
         FacesMessage msg = new FacesMessage("Edit Cancelled", ((User) event.getObject()).getFirstName());
@@ -529,13 +626,16 @@ public class OlspsController implements Serializable {
     public void deleteUser() {
         FacesContext context = FacesContext.getCurrentInstance();
         try {
-            if (userToDelete != null && selectedUser == null) {
-                this.selectedUser = this.userToDelete;
-                accessControll.deleteUser(selectedUser.getUserName());
-                findAllUsers();
-                context.addMessage(null, new FacesMessage("Successful"));
+            if (isAuthorized) {
+                if (userToDelete != null && selectedUser == null) {
+                    this.selectedUser = this.userToDelete;
+                    accessControll.deleteUser(selectedUser.getUserName());
+                    findAllUsers();
+                    context.addMessage(null, new FacesMessage("Successful"));
+                }
             }
         } catch (Exception e) {
+            log.error("Error", e);
             e.printStackTrace();
         }
     }
